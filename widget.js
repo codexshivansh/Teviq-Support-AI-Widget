@@ -430,6 +430,10 @@
       animation: teviqSuggestionsIn 220ms var(--teviq-ease) both;
     }
 
+    .teviq-suggestions.is-refreshing .teviq-suggestion-chip {
+      animation: teviqSuggestionsIn 180ms var(--teviq-ease) both;
+    }
+
     .teviq-suggestions-label {
       color: #94a3b8;
       font-size: 9.5px;
@@ -1572,28 +1576,116 @@
     });
   }
 
-  function renderQuickReplies(container, replies, submitMessage) {
-    container.innerHTML = "";
+  function createAction(label, message) {
+    return { label, message: message || label };
+  }
 
-    replies.slice(0, 6).forEach((reply) => {
-      const chip = createElement("button", "teviq-quick-reply");
-      const label = createElement("span", "", reply);
-      chip.type = "button";
-      chip.dataset.teviqReply = reply;
-      chip.setAttribute("aria-label", `Send quick reply: ${reply}`);
-      chip.appendChild(label);
-      container.appendChild(chip);
+  function normalizeAction(action) {
+    if (typeof action === "string") return createAction(action, action);
+    return createAction(action?.label || action?.message || "", action?.message || action?.label || "");
+  }
+
+  function getBrandCategory(config) {
+    const value = `${brandId} ${config?.brandName || ""} ${config?.widgetTitle || ""}`.toLowerCase();
+    if (value.includes("beauty") || value.includes("skin")) return "beauty";
+    if (value.includes("urban") || value.includes("gadget") || value.includes("electronic")) return "electronics";
+    if (value.includes("vastra") || value.includes("fashion") || value.includes("apparel")) return "fashion";
+    return "general";
+  }
+
+  function getDefaultActions() {
+    return [
+      createAction("📦 Track my order", "Track my order"),
+      createAction("↩ Return / Exchange", "Return / Exchange"),
+      createAction("🚚 Shipping & Delivery", "Shipping & Delivery"),
+      createAction("👤 Talk to Support", "Talk to human")
+    ];
+  }
+
+  function getCategoryActions(category) {
+    if (category === "fashion") {
+      return [
+        createAction("📏 Size Guide", "Size guide"),
+        createAction("👕 Exchange Size", "Exchange size")
+      ];
+    }
+    if (category === "electronics") {
+      return [
+        createAction("🛡 Warranty", "Warranty help"),
+        createAction("🔧 Product Help", "Product help")
+      ];
+    }
+    if (category === "beauty") {
+      return [
+        createAction("🌿 Ingredients", "Ingredients"),
+        createAction("✨ Product Usage", "Product usage")
+      ];
+    }
+    return [];
+  }
+
+  function uniqueActions(actions) {
+    const seen = new Set();
+    return actions.filter((action) => {
+      const key = action.message.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
     });
   }
 
-  function getCompactSuggestionLabel(reply) {
-    const value = String(reply || "").toLowerCase();
-    if (value.includes("track") || value.includes("order")) return "Track order";
-    if (value.includes("return") || value.includes("exchange")) return "Returns";
-    if (value.includes("warranty")) return "Warranty";
-    if (value.includes("size")) return "Size help";
-    if (value.includes("human") || value.includes("talk")) return "Talk to human";
-    return reply;
+  function getSuggestedActions(context) {
+    const category = context?.category || "general";
+    const intent = context?.intent || "default";
+    const categoryActions = getCategoryActions(category);
+    let actions;
+
+    if (intent === "order_tracking") {
+      actions = [
+        createAction("↩ Return Item", "Return Item"),
+        createAction("🚚 Shipping Updates", "Shipping Updates"),
+        createAction("📦 Track Another Order", "Track another order"),
+        createAction("👤 Talk to Support", "Talk to human")
+      ];
+    } else if (intent === "return_exchange") {
+      actions = [
+        createAction("💳 Refund Status", "Refund status"),
+        createAction("🔄 Exchange Item", "Exchange Item"),
+        createAction("📦 Track Order", "Track my order"),
+        createAction("👤 Talk to Support", "Talk to human")
+      ];
+    } else {
+      actions = [
+        ...getDefaultActions().slice(0, 2),
+        ...categoryActions,
+        createAction("👤 Talk to Support", "Talk to human")
+      ];
+    }
+
+    const talk = createAction("👤 Talk to Support", "Talk to human");
+    const withoutTalk = uniqueActions(actions).filter(
+      (action) => action.message.toLowerCase() !== talk.message.toLowerCase()
+    );
+    return uniqueActions([...withoutTalk.slice(0, 3), talk]);
+  }
+
+  function renderQuickReplies(container, replies, submitMessage) {
+    container.innerHTML = "";
+
+    replies.slice(0, 4).map(normalizeAction).forEach((action) => {
+      const chip = createElement("button", "teviq-quick-reply");
+      const label = createElement("span", "", action.label);
+      chip.type = "button";
+      chip.dataset.teviqReply = action.message;
+      chip.setAttribute("aria-label", `Send quick reply: ${action.label}`);
+      chip.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        submitMessage(action.message);
+      });
+      chip.appendChild(label);
+      container.appendChild(chip);
+    });
   }
 
   function renderCompactSuggestions(container, replies, submitMessage) {
@@ -1601,32 +1693,39 @@
     if (!list) return;
     list.innerHTML = "";
 
-    replies.slice(0, 6).forEach((reply) => {
+    replies.slice(0, 4).map(normalizeAction).forEach((action) => {
       const chip = createElement(
         "button",
         "teviq-suggestion-chip",
-        getCompactSuggestionLabel(reply)
+        action.label
       );
       chip.type = "button";
-      chip.dataset.teviqReply = reply;
-      chip.setAttribute("aria-label", `Send suggested action: ${reply}`);
+      chip.dataset.teviqReply = action.message;
+      chip.setAttribute("aria-label", `Send suggested action: ${action.label}`);
+      chip.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        submitMessage(action.message);
+      });
       list.appendChild(chip);
     });
   }
 
-  function renderWelcome(messages, config, submitMessage) {
+  function renderWelcome(messages, config, actions, submitMessage) {
     const card = supportCards.premiumWelcome(config);
     const quickReplies = createElement("div", "teviq-quick-replies");
     const inner = card.querySelector(".teviq-card-inner");
     if (inner) inner.appendChild(quickReplies);
     messages.appendChild(card);
-    renderQuickReplies(quickReplies, config.quickReplies || [], submitMessage);
+    renderQuickReplies(quickReplies, actions, submitMessage);
     return quickReplies;
   }
 
   async function mountWidget() {
     injectStyles();
     const config = await fetchBrandConfig();
+    const brandCategory = getBrandCategory(config);
+    const defaultActions = getDefaultActions();
     const positionClass =
       config.position === "bottom-left"
         ? "teviq-position-bottom-left"
@@ -1722,6 +1821,15 @@
       if (quickReplies) quickReplies.classList.add("is-archived");
     }
 
+    function updateCompactSuggestions(intent) {
+      const actions = getSuggestedActions({ category: brandCategory, intent });
+      compactSuggestions.classList.add("is-refreshing");
+      renderCompactSuggestions(compactSuggestions, actions, submitMessage);
+      window.setTimeout(() => {
+        compactSuggestions.classList.remove("is-refreshing");
+      }, 220);
+    }
+
     async function submitMessage(text) {
       const cleanText = text.trim();
       if (!cleanText || send.disabled) return;
@@ -1735,6 +1843,7 @@
       try {
         const data = await sendMessage(cleanText);
         renderResponseIntoBubble(pending, data, cleanText);
+        updateCompactSuggestions(data.intent);
         pulseSendSuccess(send);
       } catch (error) {
         renderErrorIntoBubble(pending, "Could not connect. Please try again.");
@@ -1745,8 +1854,8 @@
       }
     }
 
-    const quickReplies = renderWelcome(messages, config, submitMessage);
-    renderCompactSuggestions(compactSuggestions, config.quickReplies || [], submitMessage);
+    const quickReplies = renderWelcome(messages, config, defaultActions, submitMessage);
+    renderCompactSuggestions(compactSuggestions, defaultActions, submitMessage);
 
     button.addEventListener("click", () => {
       if (windowEl.classList.contains("is-open")) {
