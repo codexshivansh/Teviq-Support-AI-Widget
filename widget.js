@@ -86,8 +86,8 @@
 
     .teviq-chat-button {
       position: fixed;
-      width: 62px;
-      height: 62px;
+      width: 56px;
+      height: 56px;
       display: grid;
       place-items: center;
       border: 0;
@@ -103,7 +103,7 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.22);
       cursor: pointer;
       z-index: 2147483646;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 900;
       line-height: 1;
       will-change: transform, box-shadow;
@@ -115,8 +115,8 @@
       position: absolute;
       right: 7px;
       top: 8px;
-      width: 13px;
-      height: 13px;
+      width: 12px;
+      height: 12px;
       border: 2px solid #ffffff;
       border-radius: 50%;
       background: #22c55e;
@@ -139,14 +139,15 @@
 
     .teviq-chat-window {
       position: fixed;
-      width: min(420px, calc(100vw - 24px));
-      height: min(680px, calc(100dvh - 108px));
+      width: min(396px, calc(100vw - 24px));
+      height: min(600px, calc(100dvh - 120px));
+      max-height: calc(100dvh - 120px);
       display: flex;
       flex-direction: column;
       overflow: hidden;
       padding: 0;
       border: 1px solid var(--teviq-border);
-      border-radius: 26px;
+      border-radius: 22px;
       background: var(--teviq-surface);
       box-shadow:
         0 1px 1px rgba(15, 23, 42, 0.04),
@@ -175,7 +176,7 @@
 
     .teviq-position-bottom-right.teviq-chat-window {
       right: calc(22px + env(safe-area-inset-right));
-      bottom: calc(92px + env(safe-area-inset-bottom));
+      bottom: calc(86px + env(safe-area-inset-bottom));
     }
 
     .teviq-position-bottom-left.teviq-chat-button {
@@ -185,7 +186,7 @@
 
     .teviq-position-bottom-left.teviq-chat-window {
       left: calc(22px + env(safe-area-inset-left));
-      bottom: calc(92px + env(safe-area-inset-bottom));
+      bottom: calc(86px + env(safe-area-inset-bottom));
       transform-origin: bottom left;
     }
 
@@ -203,9 +204,9 @@
       align-items: center;
       justify-content: space-between;
       flex: 0 0 auto;
-      gap: 12px;
-      min-height: 72px;
-      padding: 14px 14px 14px 16px;
+      gap: 10px;
+      min-height: 60px;
+      padding: 10px 12px;
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent),
         linear-gradient(135deg, rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.96), #111827);
@@ -215,7 +216,7 @@
     .teviq-chat-window .teviq-chat-header {
       width: 100%;
       margin: 0;
-      padding: 14px 14px 14px 16px;
+      padding: 10px 12px;
     }
 
     .teviq-chat-header::after {
@@ -231,23 +232,23 @@
     .teviq-chat-brand {
       display: flex;
       align-items: center;
-      gap: 11px;
+      gap: 10px;
       flex: 1 1 auto;
       min-width: 0;
     }
 
     .teviq-chat-avatar {
-      width: 38px;
-      height: 38px;
+      width: 34px;
+      height: 34px;
       display: grid;
       place-items: center;
       flex: 0 0 auto;
       border: 1px solid rgba(255, 255, 255, 0.38);
-      border-radius: 14px;
+      border-radius: 12px;
       background: rgba(255, 255, 255, 0.94);
       color: var(--teviq-theme, #101828);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 12px 24px rgba(0, 0, 0, 0.12);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 900;
     }
 
@@ -260,7 +261,7 @@
       margin: 0;
       overflow: hidden;
       color: #ffffff;
-      font-size: 14.5px;
+      font-size: 15px;
       font-weight: 850;
       line-height: 1.24;
       text-overflow: ellipsis;
@@ -271,9 +272,9 @@
       display: flex;
       align-items: center;
       gap: 7px;
-      margin-top: 4px;
+      margin-top: 3px;
       color: rgba(255, 255, 255, 0.82);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 650;
       line-height: 1.2;
     }
@@ -318,8 +319,8 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding: 14px 12px 10px;
+      gap: 9px;
+      padding: 10px;
       overflow-y: auto;
       scroll-behavior: smooth;
       scrollbar-width: thin;
@@ -344,8 +345,8 @@
     .teviq-quick-replies {
       display: flex;
       flex-wrap: wrap;
-      gap: 9px;
-      margin-top: 17px;
+      gap: 7px;
+      margin-top: 8px;
     }
 
     .teviq-quick-reply {
@@ -358,8 +359,8 @@
       background: rgba(255, 255, 255, 0.78);
       color: #1f2937;
       cursor: pointer;
-      padding: 9px 12px;
-      font-size: 12.5px;
+      padding: 8px 10px;
+      font-size: 12px;
       font-weight: 700;
       line-height: 1.15;
       box-shadow: 0 1px 1px rgba(15, 23, 42, 0.03);
@@ -411,7 +412,7 @@
     .teviq-chat-message-row {
       display: flex;
       flex-direction: column;
-      max-width: 90%;
+      max-width: 92%;
       animation: teviqMessageIn 320ms var(--teviq-ease) both;
       animation-delay: var(--teviq-stagger, 0ms);
       will-change: opacity, transform;
@@ -428,10 +429,10 @@
     }
 
     .teviq-chat-message {
-      padding: 11px 13px;
-      border-radius: 20px;
-      font-size: 14px;
-      line-height: 1.5;
+      padding: 10px 12px;
+      border-radius: 16px;
+      font-size: 13.5px;
+      line-height: 1.45;
       overflow-wrap: anywhere;
       white-space: pre-wrap;
     }
@@ -480,7 +481,7 @@
       margin: 0;
       padding: 0;
       border: 1px solid rgba(226, 232, 240, 0.78);
-      border-radius: 20px;
+      border-radius: 18px;
       background: rgba(255, 255, 255, 0.9);
       box-shadow:
         0 1px 1px rgba(15, 23, 42, 0.03),
@@ -496,15 +497,15 @@
     .teviq-card-inner {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding: 14px;
+      gap: 10px;
+      padding: 13px;
     }
 
     .teviq-card-topline {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
       min-width: 0;
     }
 
@@ -513,9 +514,9 @@
     }
 
     .teviq-card-kicker {
-      margin: 0 0 5px;
+      margin: 0 0 4px;
       color: #64748b;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 780;
       line-height: 1.1;
       text-transform: uppercase;
@@ -524,7 +525,7 @@
     .teviq-card-title {
       margin: 0;
       color: #0f172a;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 790;
       line-height: 1.34;
     }
@@ -534,15 +535,30 @@
     }
 
     .teviq-card-welcome .teviq-card-title {
-      font-size: 14.5px;
-      line-height: 1.38;
+      font-size: 14px;
+      line-height: 1.28;
+    }
+
+    .teviq-card-error .teviq-card-inner,
+    .teviq-card-human .teviq-card-inner,
+    .teviq-card-lead .teviq-card-inner,
+    .teviq-card-return-rejected .teviq-card-inner {
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .teviq-card-error .teviq-card-copy,
+    .teviq-card-human .teviq-card-copy,
+    .teviq-card-lead .teviq-card-copy,
+    .teviq-card-return-rejected .teviq-card-copy {
+      line-height: 1.4;
     }
 
     .teviq-card-copy {
       margin: 0;
       color: #475569;
-      font-size: 13.25px;
-      line-height: 1.55;
+      font-size: 12.75px;
+      line-height: 1.45;
     }
 
     .teviq-card-badge {
@@ -551,10 +567,10 @@
       flex: 0 0 auto;
       border: 1px solid rgba(148, 163, 184, 0.26);
       border-radius: 999px;
-      padding: 5px 7px;
+      padding: 4px 6px;
       background: #f8fafc;
       color: #475569;
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 780;
       line-height: 1;
       white-space: nowrap;
@@ -587,21 +603,21 @@
     .teviq-card-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
+      gap: 7px;
     }
 
     .teviq-card-stat {
       min-width: 0;
       border: 1px solid rgba(226, 232, 240, 0.72);
-      border-radius: 16px;
-      padding: 10px;
+      border-radius: 13px;
+      padding: 8px;
       background: rgba(248, 250, 252, 0.76);
     }
 
     .teviq-card-label {
       margin: 0 0 4px;
       color: #94a3b8;
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 760;
       line-height: 1.1;
       text-transform: uppercase;
@@ -611,7 +627,7 @@
       margin: 0;
       overflow: hidden;
       color: #0f172a;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 760;
       line-height: 1.25;
       text-overflow: ellipsis;
@@ -630,7 +646,7 @@
       display: grid;
       grid-template-columns: 18px 1fr;
       gap: 10px;
-      min-height: 34px;
+      min-height: 30px;
       color: #94a3b8;
     }
 
@@ -682,10 +698,10 @@
       align-self: flex-start;
       border: 1px solid rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.18);
       border-radius: 999px;
-      padding: 8px 11px;
+      padding: 7px 10px;
       background: rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.06);
       color: var(--teviq-theme, #101828);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 780;
       line-height: 1;
     }
@@ -731,17 +747,18 @@
 
     .teviq-powered {
       flex: 0 0 auto;
-      min-height: 15px;
+      width: 100%;
+      min-height: 9px;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1px 14px 3px;
-      background: rgba(255, 255, 255, 0.88);
+      padding: 0;
+      background: transparent;
       color: #94a3b8;
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: 600;
-      line-height: 1;
-      opacity: 0.72;
+      line-height: 0.95;
+      opacity: 0.45;
       text-align: center;
       white-space: nowrap;
     }
@@ -755,9 +772,10 @@
     .teviq-chat-form {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       flex: 0 0 auto;
-      gap: 9px;
-      padding: 9px 12px 12px;
+      gap: 8px;
+      padding: 7px 10px 7px;
       border-top: 1px solid rgba(226, 232, 240, 0.58);
       background: rgba(255, 255, 255, 0.88);
     }
@@ -765,16 +783,23 @@
     .teviq-chat-window .teviq-chat-form {
       width: 100%;
       margin: 0;
-      padding: 9px 12px 12px;
+      padding: 7px 10px 7px;
+    }
+
+    .teviq-composer-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
     }
 
     .teviq-chat-input {
       flex: 1;
       min-width: 0;
-      height: 44px;
+      height: 42px;
       border: 1px solid rgba(203, 213, 225, 0.56);
-      border-radius: 14px;
-      padding: 0 14px;
+      border-radius: 13px;
+      padding: 0 13px;
       background: rgba(255, 255, 255, 0.82);
       color: #0f172a;
       font-size: 14px;
@@ -803,13 +828,13 @@
 
     .teviq-chat-send {
       position: relative;
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       display: grid;
       place-items: center;
       flex: 0 0 auto;
       border: 0;
-      border-radius: 14px;
+      border-radius: 13px;
       background: linear-gradient(135deg, rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.98), #111827);
       color: #ffffff;
       cursor: pointer;
@@ -827,8 +852,8 @@
     }
 
     .teviq-chat-send svg {
-      width: 18px;
-      height: 18px;
+      width: 17px;
+      height: 17px;
       transition: opacity 180ms var(--teviq-ease), transform 220ms var(--teviq-spring);
     }
 
@@ -944,26 +969,27 @@
 
       .teviq-position-bottom-right.teviq-chat-window,
       .teviq-position-bottom-left.teviq-chat-window {
-        right: calc(12px + env(safe-area-inset-right));
-        left: calc(12px + env(safe-area-inset-left));
-        bottom: calc(84px + env(safe-area-inset-bottom));
+        right: calc(10px + env(safe-area-inset-right));
+        left: calc(10px + env(safe-area-inset-left));
+        bottom: calc(76px + env(safe-area-inset-bottom));
         width: auto;
-        height: min(650px, calc(100dvh - 98px));
-        border-radius: 20px;
+        height: min(620px, calc(100dvh - 80px));
+        max-height: calc(100dvh - 80px);
+        border-radius: 16px;
         transform-origin: bottom right;
       }
 
       .teviq-chat-header {
-        min-height: 68px;
-        padding: 13px 12px 13px 14px;
+        min-height: 58px;
+        padding: 10px 11px;
       }
 
       .teviq-chat-window .teviq-chat-header {
-        padding: 13px 12px 13px 14px;
+        padding: 10px 11px;
       }
 
       .teviq-chat-messages {
-        padding: 12px 10px 9px;
+        padding: 9px;
       }
 
       .teviq-chat-message-row {
@@ -976,7 +1002,7 @@
       }
 
       .teviq-card-inner {
-        padding: 13px;
+        padding: 12px;
       }
 
       .teviq-card-topline {
@@ -984,19 +1010,19 @@
       }
 
       .teviq-card-badge {
-        padding: 5px 7px;
+        padding: 4px 6px;
       }
 
       .teviq-chat-form {
-        padding: 8px 10px 11px;
+        padding: 7px 9px 8px;
       }
 
       .teviq-chat-window .teviq-chat-form {
-        padding: 8px 10px 11px;
+        padding: 7px 9px 8px;
       }
 
       .teviq-powered {
-        padding: 2px 12px 5px;
+        padding: 1px 0 0;
       }
     }
 
@@ -1293,11 +1319,11 @@
     premiumWelcome(config) {
       return createCard({
         kind: "teviq-card-welcome",
-        kicker: "AI support",
-        title: config.welcomeMessage,
+        kicker: "Support",
+        title: "How can I help?",
         badge: "Online",
         badgeTone: "success",
-        body: "Ask about orders, returns, shipping, or products."
+        body: "I can help with orders, returns, warranty, and product questions."
       });
     },
     error(message) {
@@ -1489,7 +1515,7 @@
     const button = createElement(
       "button",
       `teviq-chat-button ${positionClass}`,
-      "AI"
+      "T"
     );
     button.type = "button";
     button.setAttribute("aria-label", `Open ${config.brandName} support chat`);
@@ -1533,6 +1559,7 @@
     powered.innerHTML = "Powered by <strong>Teviq</strong>";
 
     const form = createElement("form", "teviq-chat-form");
+    const composerRow = createElement("div", "teviq-composer-row");
     const input = createElement("input", "teviq-chat-input");
     input.type = "text";
     input.placeholder = "Ask about orders, returns, size...";
@@ -1543,9 +1570,10 @@
     send.setAttribute("aria-label", "Send message");
     send.innerHTML =
       '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.5 10h10.2M10.8 5.8l4.2 4.2-4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    form.append(input, send);
+    composerRow.append(input, send);
+    form.append(composerRow, powered);
 
-    windowEl.append(header, messages, powered, form);
+    windowEl.append(header, messages, form);
     document.body.append(windowEl, button);
 
     function openWidget() {
