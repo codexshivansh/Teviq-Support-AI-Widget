@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teviq Vastra Demo</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #111827;
+        background: #f5f6f8;
+      }
+      header, section {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 22px 20px;
+        max-width: 1120px;
+        margin: 0 auto;
+      }
+      .brand {
+        font-size: 20px;
+        font-weight: 900;
+      }
+      .nav-links {
+        display: flex;
+        gap: 20px;
+        color: #667085;
+        font-size: 14px;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 34px;
+        align-items: center;
+        padding-top: 36px;
+        padding-bottom: 54px;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(42px, 7vw, 72px);
+        line-height: 0.98;
+      }
+      .hero p {
+        max-width: 560px;
+        color: #667085;
+        font-size: 19px;
+        line-height: 1.55;
+      }
+      .hero-art {
+        min-height: 420px;
+        border-radius: 8px;
+        background:
+          linear-gradient(rgba(17, 24, 39, 0.04), rgba(17, 24, 39, 0.04)),
+          url("https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=80") center/cover;
+      }
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 24px;
+      }
+      .button {
+        border: 0;
+        border-radius: 8px;
+        background: #101828;
+        color: white;
+        padding: 13px 18px;
+        font-weight: 800;
+      }
+      .button.secondary {
+        background: #ffffff;
+        color: #101828;
+        border: 1px solid #d0d5dd;
+      }
+      .section-title {
+        margin: 0 0 18px;
+        font-size: 30px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .product, .faq, .prompt {
+        border: 1px solid #e4e7ec;
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 16px;
+      }
+      .product .image {
+        height: 180px;
+        border-radius: 8px;
+        background: #e7e9ee;
+        margin-bottom: 14px;
+      }
+      .p1 { background: #d9dce5; }
+      .p2 { background: #f1e7dd; }
+      .p3 { background: #e8eef2; }
+      .p4 { background: #eee2e6; }
+      .product strong, .faq strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+      .muted {
+        color: #667085;
+        line-height: 1.5;
+      }
+      .faq-grid, .prompt-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      section {
+        padding-bottom: 52px;
+      }
+      @media (max-width: 860px) {
+        .hero, .grid, .faq-grid, .prompt-grid {
+          grid-template-columns: 1fr;
+        }
+        .nav-links {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="brand">Teviq Vastra</div>
+      <div class="nav-links"><span>New Arrivals</span><span>Kurtas</span><span>Sarees</span><span>Support</span></div>
+    </nav>
+    <header class="hero">
+      <div>
+        <h1>Everyday ethnic wear with support that feels personal.</h1>
+        <p>Demo storefront for a fashion/D2C brand. The widget understands apparel policies, order status, sizing, returns, and escalation rules.</p>
+        <div class="cta-row"><button class="button">Shop collection</button><button class="button secondary">View size guide</button></div>
+      </div>
+      <div class="hero-art" aria-label="Fashion storefront visual"></div>
+    </header>
+    <section>
+      <h2 class="section-title">Featured Products</h2>
+      <div class="grid">
+        <article class="product"><div class="image p1"></div><strong>Indigo Cotton Kurta</strong><div class="muted">Rs. 1,799</div></article>
+        <article class="product"><div class="image p2"></div><strong>Printed Co-ord Set</strong><div class="muted">Rs. 2,499</div></article>
+        <article class="product"><div class="image p3"></div><strong>Linen Saree</strong><div class="muted">Rs. 3,299</div></article>
+        <article class="product"><div class="image p4"></div><strong>Ajrakh Maxi Dress</strong><div class="muted">Rs. 2,899</div></article>
+      </div>
+    </section>
+    <section>
+      <h2 class="section-title">FAQ</h2>
+      <div class="faq-grid">
+        <div class="faq"><strong>Delivery time?</strong><div class="muted">Usually 3-7 business days after dispatch.</div></div>
+        <div class="faq"><strong>Returns?</strong><div class="muted">Allowed within 7 days after delivery for unused items with tags.</div></div>
+        <div class="faq"><strong>COD?</strong><div class="muted">Available on eligible pincodes with phone verification.</div></div>
+        <div class="faq"><strong>Size help?</strong><div class="muted">Use the product size chart and choose larger if between sizes.</div></div>
+      </div>
+    </section>
+    <section>
+      <h2 class="section-title">Test the AI Widget</h2>
+      <div class="prompt-grid">
+        <div class="prompt">Try: "Track order TVQ1001"</div>
+        <div class="prompt">Try: "Can I return my order?"</div>
+        <div class="prompt">Try: "Do you support COD?"</div>
+        <div class="prompt">Try: "I want to talk to human"</div>
+      </div>
+    </section>
+    <script src="./widget.js" data-brand-id="vastra-demo" data-api-url="http://localhost:5000"></script>
+  </body>
+</html>

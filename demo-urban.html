@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Urban Gadgets Demo</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #0f172a;
+        background: #eef7f6;
+      }
+      nav, header, section {
+        max-width: 1140px;
+        margin: 0 auto;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 22px;
+        padding-bottom: 22px;
+      }
+      .brand {
+        font-weight: 950;
+        font-size: 20px;
+      }
+      .nav-links {
+        display: flex;
+        gap: 20px;
+        color: #475569;
+        font-size: 14px;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 34px;
+        align-items: center;
+        padding-top: 42px;
+        padding-bottom: 56px;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(42px, 7vw, 70px);
+        line-height: 0.98;
+      }
+      .hero p {
+        max-width: 560px;
+        color: #475569;
+        font-size: 19px;
+        line-height: 1.55;
+      }
+      .device-panel {
+        min-height: 390px;
+        border-radius: 8px;
+        background: #0f766e;
+        color: #ffffff;
+        padding: 30px;
+        display: grid;
+        align-content: end;
+        box-shadow: 0 24px 54px rgba(15, 118, 110, 0.2);
+      }
+      .device {
+        width: 180px;
+        height: 270px;
+        border-radius: 28px;
+        background: #111827;
+        border: 8px solid #d1fae5;
+        margin: 0 auto 34px;
+      }
+      .button {
+        border: 0;
+        border-radius: 8px;
+        background: #0f766e;
+        color: #ffffff;
+        padding: 13px 18px;
+        font-weight: 800;
+      }
+      .section-title {
+        margin: 0 0 18px;
+        font-size: 30px;
+      }
+      section {
+        padding-bottom: 52px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .product, .faq, .prompt {
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 16px;
+      }
+      .spec {
+        height: 150px;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        background: #e0f2f1;
+        color: #0f766e;
+        font-weight: 900;
+        margin-bottom: 14px;
+      }
+      .muted {
+        color: #64748b;
+        line-height: 1.5;
+      }
+      .faq-grid, .prompt-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+      @media (max-width: 860px) {
+        .hero, .grid, .faq-grid, .prompt-grid {
+          grid-template-columns: 1fr;
+        }
+        .nav-links {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="brand">Urban Gadgets</div>
+      <div class="nav-links"><span>Chargers</span><span>Audio</span><span>Cases</span><span>Warranty</span></div>
+    </nav>
+    <header class="hero">
+      <div>
+        <h1>Smart accessories with instant support built in.</h1>
+        <p>Demo storefront for electronics and accessories. The AI handles warranty, COD, compatibility, delivery, and order questions with brand-specific rules.</p>
+        <button class="button">Explore accessories</button>
+      </div>
+      <div class="device-panel"><div class="device"></div><strong>Fast answers for tech buyers</strong></div>
+    </header>
+    <section>
+      <h2 class="section-title">Best Sellers</h2>
+      <div class="grid">
+        <article class="product"><div class="spec">10K</div><strong>MagSafe Power Bank</strong><div class="muted">Rs. 2,999</div></article>
+        <article class="product"><div class="spec">65W</div><strong>GaN Fast Charger</strong><div class="muted">Rs. 1,899</div></article>
+        <article class="product"><div class="spec">BT</div><strong>Wireless Earbuds</strong><div class="muted">Rs. 2,499</div></article>
+        <article class="product"><div class="spec">USB-C</div><strong>Braided Cable Pack</strong><div class="muted">Rs. 699</div></article>
+      </div>
+    </section>
+    <section>
+      <h2 class="section-title">FAQ</h2>
+      <div class="faq-grid">
+        <div class="faq"><strong>Warranty?</strong><div class="muted">Most accessories include a 6-month manufacturing defect warranty.</div></div>
+        <div class="faq"><strong>COD?</strong><div class="muted">Available below Rs. 4,999 on selected pincodes.</div></div>
+        <div class="faq"><strong>Returns?</strong><div class="muted">Sealed unused products can be returned within 7 days after delivery.</div></div>
+        <div class="faq"><strong>Delivery?</strong><div class="muted">Metro delivery usually takes 2-4 business days after dispatch.</div></div>
+      </div>
+    </section>
+    <section>
+      <h2 class="section-title">Test the AI Widget</h2>
+      <div class="prompt-grid">
+        <div class="prompt">Try: "Track order UGD2001"</div>
+        <div class="prompt">Try: "Can I return my order?"</div>
+        <div class="prompt">Try: "Do you support COD?"</div>
+        <div class="prompt">Try: "I want to talk to human"</div>
+      </div>
+    </section>
+    <script src="./widget.js" data-brand-id="urban-demo" data-api-url="http://localhost:5000"></script>
+  </body>
+</html>

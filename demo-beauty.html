@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GlowCare Beauty Demo</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #3f1230;
+        background: #fff1f7;
+      }
+      nav, header, section {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 22px;
+        padding-bottom: 22px;
+      }
+      .brand {
+        font-size: 20px;
+        font-weight: 950;
+      }
+      .nav-links {
+        display: flex;
+        gap: 20px;
+        color: #7a2d56;
+        font-size: 14px;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 34px;
+        align-items: center;
+        padding-top: 42px;
+        padding-bottom: 56px;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(42px, 7vw, 70px);
+        line-height: 0.98;
+      }
+      .hero p {
+        max-width: 560px;
+        color: #6b214b;
+        font-size: 19px;
+        line-height: 1.55;
+      }
+      .serum {
+        min-height: 410px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #fce7f3, #ffffff 52%, #fbcfe8);
+        border: 1px solid #fbcfe8;
+        display: grid;
+        place-items: center;
+      }
+      .bottle {
+        width: 120px;
+        height: 260px;
+        border-radius: 28px 28px 16px 16px;
+        background: #be185d;
+        box-shadow: 0 26px 60px rgba(190, 24, 93, 0.26);
+      }
+      .button {
+        border: 0;
+        border-radius: 8px;
+        background: #be185d;
+        color: #ffffff;
+        padding: 13px 18px;
+        font-weight: 800;
+      }
+      section {
+        padding-bottom: 52px;
+      }
+      .section-title {
+        margin: 0 0 18px;
+        font-size: 30px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .product, .faq, .prompt {
+        border: 1px solid #fbcfe8;
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 16px;
+      }
+      .glow {
+        height: 150px;
+        border-radius: 8px;
+        background: #fce7f3;
+        margin-bottom: 14px;
+      }
+      .g2 { background: #ffe4e6; }
+      .g3 { background: #fdf2f8; }
+      .g4 { background: #fae8ff; }
+      strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+      .muted {
+        color: #7a2d56;
+        line-height: 1.5;
+      }
+      .faq-grid, .prompt-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      @media (max-width: 860px) {
+        .hero, .grid, .faq-grid, .prompt-grid {
+          grid-template-columns: 1fr;
+        }
+        .nav-links {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="brand">GlowCare Beauty</div>
+      <div class="nav-links"><span>Serums</span><span>Moisturizers</span><span>Routines</span><span>Support</span></div>
+    </nav>
+    <header class="hero">
+      <div>
+        <h1>Gentle skincare support for every buyer question.</h1>
+        <p>Demo storefront for skincare and beauty. The widget can explain patch tests, COD, sealed-product returns, delivery, and human escalation.</p>
+        <button class="button">Build my routine</button>
+      </div>
+      <div class="serum"><div class="bottle" aria-label="Serum bottle illustration"></div></div>
+    </header>
+    <section>
+      <h2 class="section-title">Routine Favorites</h2>
+      <div class="grid">
+        <article class="product"><div class="glow"></div><strong>Vitamin C Glow Serum</strong><div class="muted">Rs. 1,299</div></article>
+        <article class="product"><div class="glow g2"></div><strong>Barrier Repair Moisturizer</strong><div class="muted">Rs. 999</div></article>
+        <article class="product"><div class="glow g3"></div><strong>Hydra Gel Cleanser</strong><div class="muted">Rs. 699</div></article>
+        <article class="product"><div class="glow g4"></div><strong>Daily SPF 50</strong><div class="muted">Rs. 899</div></article>
+      </div>
+    </section>
+    <section>
+      <h2 class="section-title">FAQ</h2>
+      <div class="faq-grid">
+        <div class="faq"><strong>Patch test?</strong><div class="muted">Apply a small amount behind the ear or inner arm for 24 hours.</div></div>
+        <div class="faq"><strong>Opened products?</strong><div class="muted">Opened skincare cannot be returned unless damaged or incorrect.</div></div>
+        <div class="faq"><strong>COD?</strong><div class="muted">Available below Rs. 2,999 on selected pincodes.</div></div>
+        <div class="faq"><strong>Delivery?</strong><div class="muted">Usually 3-6 business days after dispatch.</div></div>
+      </div>
+    </section>
+    <section>
+      <h2 class="section-title">Test the AI Widget</h2>
+      <div class="prompt-grid">
+        <div class="prompt">Try: "Track order GCB3001"</div>
+        <div class="prompt">Try: "Can I return my order?"</div>
+        <div class="prompt">Try: "Do you support COD?"</div>
+        <div class="prompt">Try: "I want to talk to human"</div>
+      </div>
+    </section>
+    <script src="./widget.js" data-brand-id="beauty-demo" data-api-url="http://localhost:5000"></script>
+  </body>
+</html>

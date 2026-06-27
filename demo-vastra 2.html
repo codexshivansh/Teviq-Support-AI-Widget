@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teviq Vastra Demo</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #111827;
+        background: #f4f6f8;
+      }
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 56px 20px;
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(32px, 5vw, 54px);
+        line-height: 1;
+      }
+      p {
+        max-width: 650px;
+        color: #4b5563;
+        font-size: 18px;
+        line-height: 1.6;
+      }
+      .demo-product {
+        margin-top: 32px;
+        max-width: 380px;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+      .demo-product img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+      }
+      .demo-product div {
+        padding: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Teviq Vastra Demo</h1>
+      <p>
+        Fashion storefront demo. Try: "Where is my order TVQ1002?" or "Can I return TVQ1001?"
+      </p>
+      <section class="demo-product">
+        <img
+          src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=900&q=80"
+          alt="Ethnic wear product"
+        />
+        <div>
+          <strong>Indigo Cotton Kurta</strong>
+          <p>Soft everyday ethnic wear with size exchanges after delivery.</p>
+        </div>
+      </section>
+    </main>
+    <script src="./widget.js" data-brand-id="vastra-demo" data-api-url="http://localhost:5000"></script>
+  </body>
+</html>

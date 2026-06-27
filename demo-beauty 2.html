@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GlowCare Beauty Demo</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #3f1230;
+        background: #fff1f7;
+      }
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 56px 20px;
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(32px, 5vw, 54px);
+        line-height: 1;
+      }
+      p {
+        max-width: 650px;
+        color: #6b214b;
+        font-size: 18px;
+        line-height: 1.6;
+      }
+      .demo-product {
+        margin-top: 32px;
+        max-width: 380px;
+        border: 1px solid #fbcfe8;
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>GlowCare Beauty Demo</h1>
+      <p>
+        Beauty storefront demo. Try: "How do I patch test?" or "Can I return opened skincare?"
+      </p>
+      <section class="demo-product">
+        <strong>Vitamin C Glow Serum</strong>
+        <p>Gentle skincare guidance with patch test and return policy support.</p>
+      </section>
+    </main>
+    <script src="./widget.js" data-brand-id="beauty-demo" data-api-url="http://localhost:5000"></script>
+  </body>
+</html>
