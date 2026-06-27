@@ -1049,7 +1049,7 @@
       }
     }
 
-    @media (max-width: 520px) {
+    @media (max-width: 640px) {
       .teviq-position-bottom-right.teviq-chat-button,
       .teviq-position-bottom-left.teviq-chat-button {
         right: calc(16px + env(safe-area-inset-right));
@@ -1059,27 +1059,59 @@
 
       .teviq-position-bottom-right.teviq-chat-window,
       .teviq-position-bottom-left.teviq-chat-window {
-        right: calc(10px + env(safe-area-inset-right));
-        left: calc(10px + env(safe-area-inset-left));
-        bottom: calc(76px + env(safe-area-inset-bottom));
-        width: auto;
-        height: min(620px, calc(100dvh - 80px));
-        max-height: calc(100dvh - 80px);
-        border-radius: 16px;
-        transform-origin: bottom right;
+        inset: 0;
+        top: 0;
+        right: 0;
+        bottom: auto;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        height: var(--teviq-vh, 100dvh);
+        max-height: none;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        transform-origin: bottom center;
+      }
+
+      .teviq-chat-window.teviq-mobile-open {
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        height: var(--teviq-vh, 100dvh) !important;
+        max-width: none !important;
+        max-height: none !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+
+      .teviq-chat-window.is-open + .teviq-chat-button {
+        opacity: 0;
+        pointer-events: none;
+        transform: translate3d(0, 8px, 0) scale(0.92);
       }
 
       .teviq-chat-header {
-        min-height: 58px;
-        padding: 10px 11px;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        min-height: calc(58px + env(safe-area-inset-top));
+        padding: calc(10px + env(safe-area-inset-top)) 12px 10px;
       }
 
       .teviq-chat-window .teviq-chat-header {
-        padding: 10px 11px;
+        padding: calc(10px + env(safe-area-inset-top)) 12px 10px;
       }
 
       .teviq-chat-messages {
-        padding: 9px;
+        flex: 1 1 auto;
+        min-height: 0;
+        padding: 10px;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
       }
 
       .teviq-chat-message-row {
@@ -1104,11 +1136,14 @@
       }
 
       .teviq-chat-form {
-        padding: 7px 9px 8px;
+        position: sticky;
+        bottom: 0;
+        z-index: 2;
+        padding: 7px 10px calc(8px + env(safe-area-inset-bottom));
       }
 
       .teviq-chat-window .teviq-chat-form {
-        padding: 7px 9px 8px;
+        padding: 7px 10px calc(8px + env(safe-area-inset-bottom));
       }
 
       .teviq-powered {
@@ -1803,14 +1838,80 @@
     windowEl.append(header, messages, form);
     document.body.append(windowEl, button);
 
+    const mobileQuery = window.matchMedia("(max-width: 640px)");
+    let bodyLockState = null;
+
+    function isMobilePanel() {
+      return mobileQuery.matches;
+    }
+
+    function updateViewportHeight() {
+      const viewportHeight = window.visualViewport?.height || window.innerHeight;
+      document.documentElement.style.setProperty("--teviq-vh", `${viewportHeight}px`);
+    }
+
+    function lockBodyScroll() {
+      if (!isMobilePanel() || bodyLockState) return;
+
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      bodyLockState = {
+        scrollY,
+        htmlOverflow: document.documentElement.style.overflow,
+        bodyOverflow: document.body.style.overflow,
+        bodyPosition: document.body.style.position,
+        bodyTop: document.body.style.top,
+        bodyWidth: document.body.style.width
+      };
+
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+    }
+
+    function unlockBodyScroll() {
+      if (!bodyLockState) return;
+
+      const { scrollY, htmlOverflow, bodyOverflow, bodyPosition, bodyTop, bodyWidth } =
+        bodyLockState;
+      bodyLockState = null;
+
+      document.documentElement.style.overflow = htmlOverflow;
+      document.body.style.overflow = bodyOverflow;
+      document.body.style.position = bodyPosition;
+      document.body.style.top = bodyTop;
+      document.body.style.width = bodyWidth;
+      window.scrollTo(0, scrollY);
+    }
+
+    function syncMobileLayout() {
+      updateViewportHeight();
+      if (windowEl.classList.contains("is-open") && isMobilePanel()) {
+        windowEl.classList.add("teviq-mobile-open");
+        lockBodyScroll();
+        window.requestAnimationFrame(() => scrollToBottom(messages));
+      } else {
+        windowEl.classList.remove("teviq-mobile-open");
+        unlockBodyScroll();
+      }
+    }
+
     function openWidget() {
+      updateViewportHeight();
       windowEl.classList.add("is-open");
+      syncMobileLayout();
       button.setAttribute("aria-label", `Close ${config.brandName} support chat`);
-      window.setTimeout(() => input.focus(), 180);
+      window.setTimeout(() => {
+        if (!isMobilePanel()) input.focus();
+        scrollToBottom(messages);
+      }, 180);
     }
 
     function closeWidget() {
       windowEl.classList.remove("is-open");
+      windowEl.classList.remove("teviq-mobile-open");
+      unlockBodyScroll();
       button.setAttribute("aria-label", `Open ${config.brandName} support chat`);
     }
 
@@ -1884,6 +1985,18 @@
         closeWidget();
       }
     });
+
+    window.addEventListener("resize", syncMobileLayout);
+    if (mobileQuery.addEventListener) {
+      mobileQuery.addEventListener("change", syncMobileLayout);
+    } else if (mobileQuery.addListener) {
+      mobileQuery.addListener(syncMobileLayout);
+    }
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", syncMobileLayout);
+      window.visualViewport.addEventListener("scroll", syncMobileLayout);
+    }
+    updateViewportHeight();
   }
 
   if (document.readyState === "loading") {
