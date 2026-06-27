@@ -349,6 +349,10 @@
       margin-top: 8px;
     }
 
+    .teviq-quick-replies.is-archived {
+      display: none;
+    }
+
     .teviq-quick-reply {
       position: relative;
       overflow: hidden;
@@ -407,6 +411,68 @@
       cursor: not-allowed;
       opacity: 0.58;
       transform: none;
+    }
+
+    .teviq-suggestions {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      opacity: 0;
+      transform: translate3d(0, 6px, 0);
+      transition: opacity 220ms var(--teviq-ease), transform 220ms var(--teviq-ease);
+    }
+
+    .teviq-suggestions.is-visible {
+      display: flex;
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      animation: teviqSuggestionsIn 220ms var(--teviq-ease) both;
+    }
+
+    .teviq-suggestions-label {
+      color: #94a3b8;
+      font-size: 9.5px;
+      font-weight: 760;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .teviq-suggestion-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .teviq-suggestion-chip {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.1);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.66);
+      color: #334155;
+      cursor: pointer;
+      padding: 6px 8px;
+      font-size: 11px;
+      font-weight: 720;
+      line-height: 1;
+      transition:
+        background 180ms var(--teviq-ease),
+        border 180ms var(--teviq-ease),
+        color 180ms var(--teviq-ease),
+        transform 180ms var(--teviq-spring);
+    }
+
+    .teviq-suggestion-chip:hover:not(:disabled) {
+      border-color: rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.2);
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--teviq-theme, #101828);
+      transform: translate3d(0, -1px, 0);
+    }
+
+    .teviq-suggestion-chip:disabled {
+      cursor: not-allowed;
+      opacity: 0.58;
     }
 
     .teviq-chat-message-row {
@@ -950,6 +1016,17 @@
       }
     }
 
+    @keyframes teviqSuggestionsIn {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 6px, 0);
+      }
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
     @keyframes teviqSpin {
       to {
         transform: rotate(360deg);
@@ -1046,6 +1123,7 @@
       .teviq-quick-reply::after,
       .teviq-chat-message-row,
       .teviq-support-card,
+      .teviq-suggestions,
       .teviq-typing span {
         animation: none;
         transition: none;
@@ -1471,13 +1549,18 @@
     return data;
   }
 
-  function setBusy(input, send, quickReplies, isBusy) {
+  function setBusy(input, send, quickReplyContainers, isBusy) {
     input.disabled = isBusy;
     send.disabled = isBusy;
     input.setAttribute("aria-busy", String(isBusy));
     send.classList.toggle("is-loading", isBusy);
-    quickReplies.querySelectorAll("button").forEach((button) => {
-      button.disabled = isBusy;
+    const containers = Array.isArray(quickReplyContainers)
+      ? quickReplyContainers
+      : [quickReplyContainers];
+    containers.filter(Boolean).forEach((container) => {
+      container.querySelectorAll("button").forEach((button) => {
+        button.disabled = isBusy;
+      });
     });
   }
 
@@ -1496,10 +1579,38 @@
       const chip = createElement("button", "teviq-quick-reply");
       const label = createElement("span", "", reply);
       chip.type = "button";
+      chip.dataset.teviqReply = reply;
       chip.setAttribute("aria-label", `Send quick reply: ${reply}`);
-      chip.addEventListener("click", () => submitMessage(reply));
       chip.appendChild(label);
       container.appendChild(chip);
+    });
+  }
+
+  function getCompactSuggestionLabel(reply) {
+    const value = String(reply || "").toLowerCase();
+    if (value.includes("track") || value.includes("order")) return "Track order";
+    if (value.includes("return") || value.includes("exchange")) return "Returns";
+    if (value.includes("warranty")) return "Warranty";
+    if (value.includes("size")) return "Size help";
+    if (value.includes("human") || value.includes("talk")) return "Talk to human";
+    return reply;
+  }
+
+  function renderCompactSuggestions(container, replies, submitMessage) {
+    const list = container.querySelector(".teviq-suggestion-list");
+    if (!list) return;
+    list.innerHTML = "";
+
+    replies.slice(0, 6).forEach((reply) => {
+      const chip = createElement(
+        "button",
+        "teviq-suggestion-chip",
+        getCompactSuggestionLabel(reply)
+      );
+      chip.type = "button";
+      chip.dataset.teviqReply = reply;
+      chip.setAttribute("aria-label", `Send suggested action: ${reply}`);
+      list.appendChild(chip);
     });
   }
 
@@ -1568,6 +1679,14 @@
     powered.innerHTML = "<span>Powered by</span><strong>teviq.in</strong>";
 
     const form = createElement("form", "teviq-chat-form");
+    const compactSuggestions = createElement("div", "teviq-suggestions");
+    const compactLabel = createElement(
+      "div",
+      "teviq-suggestions-label",
+      "Suggested actions"
+    );
+    const compactList = createElement("div", "teviq-suggestion-list");
+    compactSuggestions.append(compactLabel, compactList);
     const composerRow = createElement("div", "teviq-composer-row");
     const input = createElement("input", "teviq-chat-input");
     input.type = "text";
@@ -1580,7 +1699,7 @@
     send.innerHTML =
       '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.5 10h10.2M10.8 5.8l4.2 4.2-4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     composerRow.append(input, send);
-    form.append(composerRow, powered);
+    form.append(compactSuggestions, composerRow, powered);
 
     windowEl.append(header, messages, form);
     document.body.append(windowEl, button);
@@ -1596,13 +1715,21 @@
       button.setAttribute("aria-label", `Open ${config.brandName} support chat`);
     }
 
+    function activateCompactSuggestions() {
+      if (!compactSuggestions.classList.contains("is-visible")) {
+        compactSuggestions.classList.add("is-visible");
+      }
+      if (quickReplies) quickReplies.classList.add("is-archived");
+    }
+
     async function submitMessage(text) {
       const cleanText = text.trim();
       if (!cleanText || send.disabled) return;
 
+      activateCompactSuggestions();
       appendMessage(messages, "user", cleanText);
       input.value = "";
-      setBusy(input, send, quickReplies, true);
+      setBusy(input, send, [quickReplies, compactSuggestions], true);
       const pending = appendTyping(messages);
 
       try {
@@ -1613,12 +1740,13 @@
         renderErrorIntoBubble(pending, "Could not connect. Please try again.");
       } finally {
         scrollToBottom(messages);
-        setBusy(input, send, quickReplies, false);
+        setBusy(input, send, [quickReplies, compactSuggestions], false);
         input.focus();
       }
     }
 
     const quickReplies = renderWelcome(messages, config, submitMessage);
+    renderCompactSuggestions(compactSuggestions, config.quickReplies || [], submitMessage);
 
     button.addEventListener("click", () => {
       if (windowEl.classList.contains("is-open")) {
@@ -1633,6 +1761,13 @@
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       submitMessage(input.value);
+    });
+
+    windowEl.addEventListener("click", (event) => {
+      const chip = event.target.closest("[data-teviq-reply]");
+      if (!chip || !windowEl.contains(chip)) return;
+      event.preventDefault();
+      submitMessage(chip.dataset.teviqReply || chip.textContent || "");
     });
 
     document.addEventListener("keydown", (event) => {
