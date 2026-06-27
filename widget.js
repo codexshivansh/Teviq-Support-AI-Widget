@@ -62,6 +62,18 @@
       letter-spacing: 0;
     }
 
+    .teviq-chat-window header,
+    .teviq-chat-window section,
+    .teviq-chat-window form,
+    .teviq-chat-window h2,
+    .teviq-chat-window h3,
+    .teviq-chat-window p {
+      max-width: none;
+      margin: 0;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
     .teviq-chat-button,
     .teviq-chat-window {
       --teviq-ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -132,6 +144,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      padding: 0;
       border: 1px solid var(--teviq-border);
       border-radius: 26px;
       background: var(--teviq-surface);
@@ -185,6 +198,7 @@
 
     .teviq-chat-header {
       position: relative;
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -196,6 +210,12 @@
         linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent),
         linear-gradient(135deg, rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.96), #111827);
       color: #ffffff;
+    }
+
+    .teviq-chat-window .teviq-chat-header {
+      width: 100%;
+      margin: 0;
+      padding: 14px 14px 14px 16px;
     }
 
     .teviq-chat-header::after {
@@ -457,6 +477,8 @@
       position: relative;
       overflow: hidden;
       width: 100%;
+      margin: 0;
+      padding: 0;
       border: 1px solid rgba(226, 232, 240, 0.78);
       border-radius: 20px;
       background: rgba(255, 255, 255, 0.9);
@@ -709,19 +731,25 @@
 
     .teviq-powered {
       flex: 0 0 auto;
-      padding: 3px 14px 5px;
+      min-height: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1px 14px 3px;
       background: rgba(255, 255, 255, 0.88);
       color: #94a3b8;
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 600;
       line-height: 1;
       opacity: 0.72;
       text-align: center;
+      white-space: nowrap;
     }
 
     .teviq-powered strong {
       color: #475569;
       font-weight: 850;
+      margin-left: 3px;
     }
 
     .teviq-chat-form {
@@ -732,6 +760,12 @@
       padding: 9px 12px 12px;
       border-top: 1px solid rgba(226, 232, 240, 0.58);
       background: rgba(255, 255, 255, 0.88);
+    }
+
+    .teviq-chat-window .teviq-chat-form {
+      width: 100%;
+      margin: 0;
+      padding: 9px 12px 12px;
     }
 
     .teviq-chat-input {
@@ -745,6 +779,8 @@
       color: #0f172a;
       font-size: 14px;
       outline: none;
+      appearance: none;
+      -webkit-appearance: none;
       transition: border 220ms var(--teviq-ease), box-shadow 220ms var(--teviq-ease), background 220ms var(--teviq-ease);
     }
 
@@ -753,10 +789,10 @@
     }
 
     .teviq-chat-input:focus {
-      border-color: rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.34);
+      border-color: rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.24);
       background: #ffffff;
       box-shadow:
-        0 0 0 2px rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.055),
+        0 0 0 2px rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.035),
         0 8px 18px rgba(15, 23, 42, 0.04);
     }
 
@@ -838,10 +874,13 @@
     .teviq-chat-button:focus-visible,
     .teviq-chat-close:focus-visible,
     .teviq-chat-send:focus-visible,
-    .teviq-quick-reply:focus-visible,
-    .teviq-chat-input:focus-visible {
+    .teviq-quick-reply:focus-visible {
       outline: 2px solid rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.18);
       outline-offset: 2px;
+    }
+
+    .teviq-chat-input:focus-visible {
+      outline: none;
     }
 
     @keyframes teviqTyping {
@@ -919,6 +958,10 @@
         padding: 13px 12px 13px 14px;
       }
 
+      .teviq-chat-window .teviq-chat-header {
+        padding: 13px 12px 13px 14px;
+      }
+
       .teviq-chat-messages {
         padding: 12px 10px 9px;
       }
@@ -945,6 +988,10 @@
       }
 
       .teviq-chat-form {
+        padding: 8px 10px 11px;
+      }
+
+      .teviq-chat-window .teviq-chat-form {
         padding: 8px 10px 11px;
       }
 
