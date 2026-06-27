@@ -752,21 +752,25 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 3px;
       padding: 0;
       background: transparent;
       color: #94a3b8;
       font-size: 9px;
       font-weight: 600;
-      line-height: 0.95;
+      line-height: 1;
       opacity: 0.45;
       text-align: center;
       white-space: nowrap;
     }
 
     .teviq-powered strong {
+      display: inline-flex;
+      align-items: center;
       color: #475569;
       font-weight: 850;
-      margin-left: 3px;
+      line-height: 1;
+      margin-left: 0;
     }
 
     .teviq-chat-form {
