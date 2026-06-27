@@ -750,9 +750,9 @@
       width: 100%;
       min-height: 9px;
       display: flex;
-      align-items: center;
+      align-items: baseline;
       justify-content: center;
-      gap: 3px;
+      gap: 4px;
       padding: 0;
       background: transparent;
       color: #94a3b8;
@@ -764,13 +764,18 @@
       white-space: nowrap;
     }
 
+    .teviq-powered span,
     .teviq-powered strong {
-      display: inline-flex;
-      align-items: center;
+      display: block;
+      font-size: inherit;
+      line-height: 1;
+    }
+
+    .teviq-powered strong {
       color: #475569;
       font-weight: 850;
-      line-height: 1;
       margin-left: 0;
+      transform: translateY(0.5px);
     }
 
     .teviq-chat-form {
@@ -1560,7 +1565,7 @@
     const messages = createElement("div", "teviq-chat-messages");
 
     const powered = createElement("div", "teviq-powered");
-    powered.innerHTML = "Powered by <strong>Teviq</strong>";
+    powered.innerHTML = "<span>Powered by</span><strong>Teviq</strong>";
 
     const form = createElement("form", "teviq-chat-form");
     const composerRow = createElement("div", "teviq-composer-row");
