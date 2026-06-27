@@ -775,7 +775,7 @@
       color: #475569;
       font-weight: 850;
       margin-left: 0;
-      transform: translateY(0.5px);
+      transform: translateY(0.4px);
     }
 
     .teviq-chat-form {
@@ -1565,7 +1565,7 @@
     const messages = createElement("div", "teviq-chat-messages");
 
     const powered = createElement("div", "teviq-powered");
-    powered.innerHTML = "<span>Powered by</span><strong>Teviq</strong>";
+    powered.innerHTML = "<span>Powered by</span><strong>teviq.in</strong>";
 
     const form = createElement("form", "teviq-chat-form");
     const composerRow = createElement("div", "teviq-composer-row");
