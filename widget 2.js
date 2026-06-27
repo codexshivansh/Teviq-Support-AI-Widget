@@ -4,7 +4,7 @@
   const currentScript = document.currentScript;
   const brandId = currentScript?.getAttribute("data-brand-id") || "vastra-demo";
   const apiUrl =
-    currentScript?.getAttribute("data-api-url") || "http://localhost:5000";
+    currentScript?.getAttribute("data-api-url") || "https://teviq-support-ai-backend.onrender.com";
 
   function getBrandName(id) {
     if (id === "vastra-demo") return "Teviq Vastra Demo";
