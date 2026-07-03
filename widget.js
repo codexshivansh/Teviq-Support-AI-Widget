@@ -1059,10 +1059,11 @@
 
       .teviq-position-bottom-right.teviq-chat-window,
       .teviq-position-bottom-left.teviq-chat-window {
+        position: fixed;
         inset: 0;
         top: 0;
         right: 0;
-        bottom: auto;
+        bottom: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
@@ -1075,8 +1076,15 @@
         transform-origin: bottom center;
       }
 
+      .teviq-position-bottom-right.teviq-chat-window.is-open,
+      .teviq-position-bottom-left.teviq-chat-window.is-open,
       .teviq-chat-window.teviq-mobile-open {
+        position: fixed !important;
         inset: 0 !important;
+        top: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
         width: 100vw !important;
         height: 100vh !important;
         height: 100dvh !important;
@@ -1086,6 +1094,8 @@
         margin: 0 !important;
         border-radius: 0 !important;
         box-shadow: none !important;
+        transform: translate3d(0, 0, 0) scale(1) !important;
+        filter: blur(0) !important;
       }
 
       .teviq-chat-window.is-open + .teviq-chat-button {
