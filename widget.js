@@ -2,7 +2,7 @@
   "use strict";
 
   const currentScript = document.currentScript;
-  const brandId = currentScript?.getAttribute("data-brand-id") || "vastra-demo";
+  const brandId = (currentScript?.getAttribute("data-brand-id") || "").trim().toLowerCase();
   const apiUrl =
     currentScript?.getAttribute("data-api-url") ||
     "https://teviq-support-ai-backend.onrender.com";
@@ -52,6 +52,11 @@
     position: "bottom-right",
     quickReplies: ["Track my order", "Return / Exchange", "Size help", "Talk to human"]
   };
+
+  if (!brandId) {
+    console.error("[Teviq Support AI] Missing required data-brand-id on widget script tag.");
+    return;
+  }
 
   const styles = `
     .teviq-chat-button,
@@ -1583,6 +1588,7 @@
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        brand_id: brandId,
         brandId,
         message,
         customerId: getCustomerId()
