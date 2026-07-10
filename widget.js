@@ -8,6 +8,13 @@
     "https://teviq-support-ai-backend.onrender.com";
   const normalizedApiUrl = apiUrl.replace(/\/$/, "");
 
+  // F7: host pages (e.g. a real order-status page) can set this before
+  // loading widget.js to give the chat pre-known context, so the customer
+  // is never asked for information the page itself already has.
+  const teviqSupportConfig = window.TeviqSupportConfig || {};
+  const contextOrderId =
+    typeof teviqSupportConfig.orderId === "string" ? teviqSupportConfig.orderId.trim() : "";
+
   function getBrandName(id) {
     if (id === "vastra-demo") return "Teviq Vastra Demo";
     return id
@@ -1591,7 +1598,8 @@
         brand_id: brandId,
         brandId,
         message,
-        customerId: getCustomerId()
+        customerId: getCustomerId(),
+        ...(contextOrderId ? { context: { orderId: contextOrderId } } : {})
       })
     });
 
