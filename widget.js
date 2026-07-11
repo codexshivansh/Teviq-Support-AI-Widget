@@ -1468,10 +1468,12 @@
       return createCard({
         kind: "teviq-card-welcome",
         kicker: "Support",
-        title: "How can I help?",
+        title: config?.welcomeTitle || "How can I help?",
         badge: "Online",
         badgeTone: "success",
-        body: "I can help with orders, returns, warranty, and product questions."
+        body:
+          config?.welcomeBody ||
+          "I can help with orders, returns, warranty, and product questions."
       });
     },
     error(message) {
@@ -1652,7 +1654,10 @@
     return "general";
   }
 
-  function getDefaultActions() {
+  function getDefaultActions(config) {
+    if (Array.isArray(config?.quickReplies) && config.quickReplies.length > 0) {
+      return config.quickReplies.map((reply) => createAction(reply.label, reply.message));
+    }
     return [
       createAction("📦 Track my order", "Track my order"),
       createAction("↩ Return / Exchange", "Return / Exchange"),
@@ -1784,7 +1789,7 @@
     injectStyles();
     const config = await fetchBrandConfig();
     const brandCategory = getBrandCategory(config);
-    const defaultActions = getDefaultActions();
+    const defaultActions = getDefaultActions(config);
     const positionClass =
       config.position === "bottom-left"
         ? "teviq-position-bottom-left"
