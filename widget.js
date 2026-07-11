@@ -1720,7 +1720,7 @@
       ];
     } else {
       actions = [
-        ...getDefaultActions().slice(0, 2),
+        ...getDefaultActions(context?.config).slice(0, 2),
         ...categoryActions,
         createAction("👤 Talk to Support", "Talk to human")
       ];
@@ -1853,7 +1853,7 @@
     const composerRow = createElement("div", "teviq-composer-row");
     const input = createElement("input", "teviq-chat-input");
     input.type = "text";
-    input.placeholder = "Ask about orders, returns, size...";
+    input.placeholder = config?.inputPlaceholder || "Ask about orders, returns, size...";
     input.autocomplete = "off";
     input.setAttribute("aria-label", "Type your support message");
     const send = createElement("button", "teviq-chat-send");
@@ -1952,7 +1952,7 @@
     }
 
     function updateCompactSuggestions(intent) {
-      const actions = getSuggestedActions({ category: brandCategory, intent });
+      const actions = getSuggestedActions({ category: brandCategory, intent, config });
       compactSuggestions.classList.add("is-refreshing");
       renderCompactSuggestions(compactSuggestions, actions, submitMessage);
       window.setTimeout(() => {
