@@ -1533,10 +1533,18 @@
     }
 
     if (intent === "refund_status") return [supportCards.refundStatus(data, context)];
-    if (intent === "human_support" || intent === "complaint" || intent === "escalation" || data?.escalated) {
+    // "complaint"/"escalation"/data.escalated mean the backend already handed the
+    // customer real contact details (buildEscalationReply — phone/email/hours).
+    // "human_support" is different: backend/brain/toolRouter.js routes it through
+    // buildLeadCaptureReply, which asks the CUSTOMER for their name/phone/email —
+    // the opposite of "contact details included when available". It belongs with
+    // the lead-capture card (same as business_enquiry), not the human-support one.
+    if (intent === "complaint" || intent === "escalation" || data?.escalated) {
       return [supportCards.humanSupport(data, context)];
     }
-    if (intent === "lead_capture" || intent === "business_enquiry") return [supportCards.leadCapture(data, context)];
+    if (intent === "lead_capture" || intent === "business_enquiry" || intent === "human_support") {
+      return [supportCards.leadCapture(data, context)];
+    }
     if (intent === "product_recommendation" || intent === "size_help") {
       return [supportCards.productRecommendation(data, context)];
     }
