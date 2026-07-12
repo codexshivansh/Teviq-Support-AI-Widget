@@ -788,6 +788,89 @@
       line-height: 1;
     }
 
+    .teviq-lead-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .teviq-lead-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .teviq-lead-label {
+      font-size: 11px;
+      font-weight: 780;
+      letter-spacing: 0.02em;
+      color: #64748b;
+    }
+
+    .teviq-lead-input {
+      height: 38px;
+      border: 1px solid rgba(203, 213, 225, 0.7);
+      border-radius: 11px;
+      padding: 0 12px;
+      background: #ffffff;
+      color: #0f172a;
+      font-size: 13.5px;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border 180ms var(--teviq-ease), box-shadow 180ms var(--teviq-ease);
+    }
+
+    .teviq-lead-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .teviq-lead-input:focus {
+      border-color: rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.3);
+      box-shadow: 0 0 0 2px rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.06);
+    }
+
+    .teviq-lead-input:disabled {
+      cursor: not-allowed;
+      background: #f8fafc;
+      color: #94a3b8;
+    }
+
+    .teviq-lead-input[aria-invalid="true"] {
+      border-color: rgba(220, 38, 38, 0.55);
+    }
+
+    .teviq-lead-error {
+      margin: 0;
+      font-size: 11px;
+      font-weight: 650;
+      color: #dc2626;
+      min-height: 0;
+    }
+
+    .teviq-lead-submit {
+      margin-top: 2px;
+      height: 40px;
+      border: none;
+      border-radius: 12px;
+      background: var(--teviq-theme, #101828);
+      color: #ffffff;
+      font-size: 13.5px;
+      font-weight: 780;
+      cursor: pointer;
+      transition: opacity 180ms var(--teviq-ease);
+    }
+
+    .teviq-lead-submit:hover:not(:disabled) {
+      opacity: 0.92;
+    }
+
+    .teviq-lead-submit:disabled {
+      cursor: wait;
+      opacity: 0.6;
+    }
+
     .teviq-chat-message.error {
       border-color: rgba(251, 191, 36, 0.52);
       background: #fffbeb;
@@ -1353,6 +1436,117 @@
     return timeline;
   }
 
+  function isValidLeadPhone(value) {
+    return /^(?:\+?91[-\s]?)?[6-9]\d{9}$/.test(value.replace(/[()\s-]/g, ""));
+  }
+
+  function isValidLeadEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+  // Structured Name/Phone/Email(optional) + Submit inline form for the
+  // lead-capture card, replacing the old plain-text "Name + phone or email"
+  // pill that made customers type free text into the main composer (which
+  // the backend's regex-based extractContactInfo() could parse inconsistently
+  // depending on phrasing). Submitting composes an unambiguous "Name: X,
+  // Phone: Y[, Email: Z]" message and hands it to the widget's existing
+  // data-teviq-reply delegated click handler (see the windowEl click listener
+  // further down) so it goes through the exact same submitMessage() pipeline
+  // as quick-reply chips — no separate send/render code path to maintain.
+  function createLeadForm() {
+    const form = createElement("div", "teviq-lead-form");
+    let fieldIndex = 0;
+
+    function buildField(labelText, inputType, placeholder, isRequired) {
+      fieldIndex += 1;
+      const inputId = `teviq-lead-field-${fieldIndex}-${Math.random().toString(36).slice(2, 7)}`;
+      const field = createElement("div", "teviq-lead-field");
+      const label = createElement(
+        "label",
+        "teviq-lead-label",
+        isRequired ? labelText : `${labelText} (optional)`
+      );
+      label.setAttribute("for", inputId);
+      field.appendChild(label);
+
+      const input = createElement("input", "teviq-lead-input");
+      input.type = inputType;
+      input.id = inputId;
+      input.placeholder = placeholder;
+      input.autocomplete = inputType === "tel" ? "tel" : inputType === "email" ? "email" : "name";
+      field.appendChild(input);
+
+      const error = createElement("p", "teviq-lead-error", "");
+      field.appendChild(error);
+
+      form.appendChild(field);
+      return { input, error };
+    }
+
+    const nameField = buildField("Name", "text", "Your full name", true);
+    const phoneField = buildField("Phone number", "tel", "10-digit mobile number", true);
+    const emailField = buildField("Email", "email", "you@example.com", false);
+
+    const submit = createElement("button", "teviq-lead-submit", "Submit details");
+    submit.type = "button";
+    form.appendChild(submit);
+
+    function setError(field, message) {
+      field.error.textContent = message;
+      field.input.setAttribute("aria-invalid", message ? "true" : "false");
+    }
+
+    submit.addEventListener("click", (event) => {
+      const name = nameField.input.value.trim();
+      const phone = phoneField.input.value.trim();
+      const email = emailField.input.value.trim();
+
+      setError(nameField, "");
+      setError(phoneField, "");
+      setError(emailField, "");
+      let hasError = false;
+
+      if (!name) {
+        setError(nameField, "Please enter your name");
+        hasError = true;
+      }
+      if (!phone) {
+        setError(phoneField, "Please enter your phone number");
+        hasError = true;
+      } else if (!isValidLeadPhone(phone)) {
+        setError(phoneField, "Enter a valid 10-digit mobile number");
+        hasError = true;
+      }
+      if (email && !isValidLeadEmail(email)) {
+        setError(emailField, "Enter a valid email address");
+        hasError = true;
+      }
+
+      if (hasError) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+
+      // Normalize the phone to a clean 10-digit run before composing the
+      // message — the backend's extractContactInfo() regex expects a plain
+      // sequence with no dashes/spaces/brackets, and this way it always
+      // matches regardless of how the customer formatted it in the input.
+      const normalizedPhone = phone.replace(/[()\s-]/g, "");
+      const parts = [`Name: ${name}`, `Phone: ${normalizedPhone}`];
+      if (email) parts.push(`Email: ${email}`);
+
+      [nameField.input, phoneField.input, emailField.input].forEach((el) => {
+        el.disabled = true;
+      });
+      submit.disabled = true;
+      submit.textContent = "Sending...";
+      submit.dataset.teviqReply = parts.join(", ");
+    });
+
+    return form;
+  }
+
   const supportCards = {
     orderStatus(data, context) {
       const status = data.order?.status || extractStatus(data.reply);
@@ -1443,6 +1637,17 @@
       });
     },
     leadCapture(data) {
+      if (data.leadCaptured) {
+        return createCard({
+          kind: "teviq-card-lead is-received",
+          kicker: "Contact request",
+          title: "Details received",
+          badge: "Saved",
+          badgeTone: "success",
+          body: data.reply
+        });
+      }
+
       return createCard({
         kind: "teviq-card-lead",
         kicker: "Contact request",
@@ -1450,7 +1655,7 @@
         badge: "Lead",
         badgeTone: "info",
         body: data.reply,
-        action: "Name + phone or email"
+        content: createLeadForm()
       });
     },
     productRecommendation(data) {
