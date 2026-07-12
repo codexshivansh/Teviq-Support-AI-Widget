@@ -1532,9 +1532,15 @@
       // message — the backend's extractContactInfo() regex expects a plain
       // sequence with no dashes/spaces/brackets, and this way it always
       // matches regardless of how the customer formatted it in the input.
+      // No "Name:"/"Phone:" labels here — extractContactInfo() just scans
+      // the whole string for a phone/email pattern regardless of prefix, so
+      // a plain "bhavya, 9918809600" both parses correctly on the backend
+      // AND reads like something a person actually typed, instead of the
+      // "Name: X, Phone: Y" robotic-looking echo that showed up in the chat
+      // log before.
       const normalizedPhone = phone.replace(/[()\s-]/g, "");
-      const parts = [`Name: ${name}`, `Phone: ${normalizedPhone}`];
-      if (email) parts.push(`Email: ${email}`);
+      const parts = [name, normalizedPhone];
+      if (email) parts.push(email);
 
       [nameField.input, phoneField.input, emailField.input].forEach((el) => {
         el.disabled = true;
@@ -1542,6 +1548,15 @@
       submit.disabled = true;
       submit.textContent = "Sending...";
       submit.dataset.teviqReply = parts.join(", ");
+      // Deferred so it runs after this click has finished bubbling up to the
+      // windowEl delegated handler (which reads submit.dataset.teviqReply
+      // and dispatches the message) — updating the label immediately here
+      // is harmless either way, but doing it on the next tick keeps the
+      // dispatch and the visual "sent" state cleanly separate instead of
+      // racing them in the same synchronous handler.
+      window.setTimeout(() => {
+        submit.textContent = "Sent ✓";
+      }, 0);
     });
 
     return form;
