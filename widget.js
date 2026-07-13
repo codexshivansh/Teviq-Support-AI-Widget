@@ -788,6 +788,69 @@
       line-height: 1;
     }
 
+    .teviq-support-contacts {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      padding-top: 2px;
+    }
+
+    .teviq-support-contacts-title {
+      margin: 0;
+      color: #94a3b8;
+      font-size: 10px;
+      font-weight: 780;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .teviq-support-contact-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-width: 0;
+      border: 1px solid rgba(226, 232, 240, 0.82);
+      border-radius: 12px;
+      padding: 8px 10px;
+      background: rgba(248, 250, 252, 0.82);
+      color: #0f172a;
+      text-decoration: none;
+      transition:
+        border-color 180ms var(--teviq-ease),
+        background 180ms var(--teviq-ease),
+        transform 180ms var(--teviq-ease);
+    }
+
+    a.teviq-support-contact-row:hover {
+      border-color: rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.22);
+      background: #ffffff;
+      transform: translate3d(0, -1px, 0);
+    }
+
+    a.teviq-support-contact-row:focus-visible {
+      outline: 2px solid rgba(var(--teviq-theme-rgb, 16, 24, 40), 0.3);
+      outline-offset: 2px;
+    }
+
+    .teviq-support-contact-label {
+      flex: 0 0 auto;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .teviq-support-contact-value {
+      min-width: 0;
+      overflow: hidden;
+      color: #0f172a;
+      font-size: 11.5px;
+      font-weight: 760;
+      text-align: right;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .teviq-lead-form {
       display: flex;
       flex-direction: column;
@@ -1436,6 +1499,60 @@
     return timeline;
   }
 
+  function parseSupportContactDetails(reply) {
+    const rawReply = String(reply || "").trim();
+    const whatsappMatch = rawReply.match(
+      /\b(?:Phone\/WhatsApp|WhatsApp|Phone):\s*(\+?\d(?:[\d\s-]{7,}\d))/i
+    );
+    const emailMatch = rawReply.match(
+      /\bEmail:\s*([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i
+    );
+    const availabilityMatch = rawReply.match(/\b(?:Available|Hours):\s*(.+)$/i);
+    let body = rawReply;
+
+    [whatsappMatch, emailMatch, availabilityMatch].filter(Boolean).forEach((match) => {
+      body = body.replace(match[0], " ");
+    });
+
+    return {
+      body: body.replace(/\s+/g, " ").replace(/\s+([,.;:])/g, "$1").trim(),
+      whatsapp: whatsappMatch?.[1]?.trim() || "",
+      email: emailMatch?.[1]?.trim() || "",
+      availability: availabilityMatch?.[1]?.trim() || ""
+    };
+  }
+
+  function createSupportContacts(details) {
+    if (!details.whatsapp && !details.email && !details.availability) return null;
+
+    const contacts = createElement("div", "teviq-support-contacts");
+    addText(contacts, "p", "teviq-support-contacts-title", "Support contact");
+
+    function addContactRow(label, value, href) {
+      if (!value) return;
+      const row = createElement(href ? "a" : "div", "teviq-support-contact-row");
+      if (href) {
+        row.href = href;
+        row.target = "_blank";
+        row.rel = "noopener noreferrer";
+      }
+      addText(row, "span", "teviq-support-contact-label", label);
+      addText(row, "span", "teviq-support-contact-value", value);
+      contacts.appendChild(row);
+    }
+
+    if (details.whatsapp) {
+      const whatsappNumber = details.whatsapp.replace(/\D/g, "");
+      addContactRow("WhatsApp", details.whatsapp, `https://wa.me/${whatsappNumber}`);
+    }
+    if (details.email) {
+      addContactRow("Email", details.email, `mailto:${details.email}`);
+    }
+    addContactRow("Available", details.availability);
+
+    return contacts;
+  }
+
   function isValidLeadPhone(value) {
     return /^(?:\+?91[-\s]?)?[6-9]\d{9}$/.test(value.replace(/[()\s-]/g, ""));
   }
@@ -1641,14 +1758,15 @@
       });
     },
     humanSupport(data) {
+      const contactDetails = parseSupportContactDetails(data.reply);
       return createCard({
         kind: "teviq-card-human",
         kicker: data.escalated ? "Escalated" : "Human support",
         title: "A human can help from here",
         badge: data.escalated ? "Priority" : "Support",
         badgeTone: data.escalated ? "danger" : "info",
-        body: data.reply,
-        action: "Contact details included when available"
+        body: contactDetails.body,
+        content: createSupportContacts(contactDetails)
       });
     },
     leadCapture(data) {
@@ -1756,9 +1874,9 @@
     // "complaint"/"escalation"/data.escalated mean the backend already handed the
     // customer real contact details (buildEscalationReply — phone/email/hours).
     // "human_support" is different: backend/brain/toolRouter.js routes it through
-    // buildLeadCaptureReply, which asks the CUSTOMER for their name/phone/email —
-    // the opposite of "contact details included when available". It belongs with
-    // the lead-capture card (same as business_enquiry), not the human-support one.
+    // buildLeadCaptureReply, which asks the CUSTOMER for their name/phone/email.
+    // It belongs with the lead-capture card (same as business_enquiry), not the
+    // human-support card that presents the brand's configured contact channels.
     if (intent === "complaint" || intent === "escalation" || data?.escalated) {
       return [supportCards.humanSupport(data, context)];
     }
