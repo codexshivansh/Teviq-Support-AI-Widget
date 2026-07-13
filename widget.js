@@ -354,6 +354,11 @@
       background-clip: padding-box;
     }
 
+    .teviq-chat-messages > .teviq-support-card,
+    .teviq-chat-messages > .teviq-chat-message-row {
+      flex: 0 0 auto;
+    }
+
     .teviq-quick-replies {
       display: flex;
       flex-wrap: wrap;
@@ -619,6 +624,24 @@
     .teviq-card-welcome .teviq-card-title {
       font-size: 14px;
       line-height: 1.28;
+    }
+
+    .teviq-card-welcome.is-archived .teviq-card-inner {
+      gap: 0;
+      padding: 10px 12px;
+    }
+
+    .teviq-card-welcome.is-archived .teviq-card-kicker,
+    .teviq-card-welcome.is-archived .teviq-card-copy {
+      display: none;
+    }
+
+    .teviq-card-welcome.is-archived .teviq-card-title {
+      overflow: hidden;
+      font-size: 13.5px;
+      line-height: 1.2;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .teviq-card-error .teviq-card-inner,
@@ -2167,7 +2190,10 @@
       getInitials(config.brandName)
     );
     const titleWrap = createElement("div", "teviq-chat-title-wrap");
-    const title = createElement("h2", "teviq-chat-title", config.widgetTitle);
+    const headerTitle =
+      config.headerTitle ||
+      (brandId === "teviq" ? "Teviq Support AI" : config.brandName || config.widgetTitle);
+    const title = createElement("h2", "teviq-chat-title", headerTitle);
     const status = createElement("div", "teviq-chat-status");
     const statusDot = createElement("span", "teviq-chat-status-dot");
     const statusText = createElement("span", "", "Online support");
@@ -2294,7 +2320,11 @@
       if (!compactSuggestions.classList.contains("is-visible")) {
         compactSuggestions.classList.add("is-visible");
       }
-      if (quickReplies) quickReplies.classList.add("is-archived");
+      if (quickReplies) {
+        quickReplies.classList.add("is-archived");
+        const welcomeCard = quickReplies.closest(".teviq-card-welcome");
+        if (welcomeCard) welcomeCard.classList.add("is-archived");
+      }
     }
 
     function updateCompactSuggestions(intent) {
