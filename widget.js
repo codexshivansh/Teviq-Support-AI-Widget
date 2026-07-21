@@ -2336,6 +2336,11 @@
       updateViewportHeight();
       windowEl.classList.add("is-open");
       syncMobileLayout();
+      window.dispatchEvent(
+        new CustomEvent("teviq:widget-opened", {
+          detail: { brandId }
+        })
+      );
       button.setAttribute("aria-label", `Close ${config.brandName} support chat`);
       window.setTimeout(() => {
         if (!isMobilePanel()) input.focus();
