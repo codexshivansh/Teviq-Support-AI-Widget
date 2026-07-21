@@ -51,14 +51,31 @@
     }).format(new Date());
   }
 
-  const fallbackConfig = {
-    brandName: getBrandName(brandId),
-    widgetTitle: `${getBrandName(brandId)} Support`,
-    welcomeMessage: `Hi, welcome to ${getBrandName(brandId)} support. How can I help?`,
-    themeColor: "#101828",
-    position: "bottom-right",
-    quickReplies: ["Track my order", "Return / Exchange", "Size help", "Talk to human"]
-  };
+  const fallbackConfig =
+    brandId === "teviq"
+      ? {
+          brandName: "Teviq AI",
+          widgetTitle: "How can I help?",
+          welcomeTitle: "How can I help?",
+          welcomeBody: "Ask me about pricing, setup, or how Teviq works for your brand.",
+          inputPlaceholder: "Ask about pricing, setup, features...",
+          themeColor: "#0f172a",
+          position: "bottom-right",
+          quickReplies: [
+            { label: "💰 Pricing", message: "💰 Pricing" },
+            { label: "⚡ Setup time", message: "⚡ Setup time" },
+            { label: "📅 Book a demo", message: "📅 Book a demo" },
+            { label: "🛒 For my brand", message: "🛒 For my brand" }
+          ]
+        }
+      : {
+          brandName: getBrandName(brandId),
+          widgetTitle: `${getBrandName(brandId)} Support`,
+          welcomeMessage: `Hi, welcome to ${getBrandName(brandId)} support. How can I help?`,
+          themeColor: "#101828",
+          position: "bottom-right",
+          quickReplies: ["Track my order", "Return / Exchange", "Size help", "Talk to human"]
+        };
 
   if (!brandId) {
     console.error("[Teviq Support AI] Missing required data-brand-id on widget script tag.");
@@ -2025,7 +2042,7 @@
 
   function getDefaultActions(config) {
     if (Array.isArray(config?.quickReplies) && config.quickReplies.length > 0) {
-      return config.quickReplies.map((reply) => createAction(reply.label, reply.message));
+      return config.quickReplies.map(normalizeAction).filter((action) => action.label);
     }
     return [
       createAction("📦 Track my order", "Track my order"),
@@ -2154,11 +2171,11 @@
     return quickReplies;
   }
 
-  async function mountWidget() {
+  function mountWidget() {
     injectStyles();
-    const config = await fetchBrandConfig();
-    const brandCategory = getBrandCategory(config);
-    const defaultActions = getDefaultActions(config);
+    let config = { ...fallbackConfig };
+    let brandCategory = getBrandCategory(config);
+    let defaultActions = getDefaultActions(config);
     const positionClass =
       config.position === "bottom-left"
         ? "teviq-position-bottom-left"
@@ -2360,7 +2377,7 @@
       }
     }
 
-    const quickReplies = renderWelcome(messages, config, defaultActions, submitMessage);
+    let quickReplies = renderWelcome(messages, config, defaultActions, submitMessage);
     renderCompactSuggestions(compactSuggestions, defaultActions, submitMessage);
 
     button.addEventListener("click", () => {
@@ -2402,6 +2419,39 @@
       window.visualViewport.addEventListener("scroll", syncMobileLayout);
     }
     updateViewportHeight();
+
+    fetchBrandConfig().then((remoteConfig) => {
+      config = { ...fallbackConfig, ...remoteConfig };
+      brandCategory = getBrandCategory(config);
+      defaultActions = getDefaultActions(config);
+
+      applyTheme(button, config.themeColor);
+      applyTheme(windowEl, config.themeColor);
+      avatar.textContent = getInitials(config.brandName);
+      title.textContent =
+        config.headerTitle ||
+        (brandId === "teviq" ? "Teviq Support AI" : config.brandName || config.widgetTitle);
+      input.placeholder = config.inputPlaceholder || "Ask about orders, returns, size...";
+      windowEl.setAttribute("aria-label", `${config.brandName} support chat`);
+      button.setAttribute(
+        "aria-label",
+        `${windowEl.classList.contains("is-open") ? "Close" : "Open"} ${config.brandName} support chat`
+      );
+
+      if (!messages.querySelector(".teviq-chat-message-row.user")) {
+        const currentWelcome = messages.querySelector(".teviq-card-welcome");
+        const replacement = supportCards.premiumWelcome(config);
+        const refreshedQuickReplies = createElement("div", "teviq-quick-replies");
+        const inner = replacement.querySelector(".teviq-card-inner");
+        if (inner) inner.appendChild(refreshedQuickReplies);
+        renderQuickReplies(refreshedQuickReplies, defaultActions, submitMessage);
+
+        if (currentWelcome) currentWelcome.replaceWith(replacement);
+        else messages.appendChild(replacement);
+        quickReplies = refreshedQuickReplies;
+        renderCompactSuggestions(compactSuggestions, defaultActions, submitMessage);
+      }
+    });
   }
 
   if (document.readyState === "loading") {
