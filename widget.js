@@ -166,6 +166,24 @@
       transform: translate3d(0, -1px, 0) scale(0.965);
     }
 
+    .teviq-launcher-icon {
+      width: 28px;
+      height: 28px;
+      display: block;
+      color: currentColor;
+      filter: drop-shadow(0 1px 1px rgba(15, 23, 42, 0.16));
+      transform: translate3d(0, 0, 0);
+      transition: transform 260ms var(--teviq-spring);
+    }
+
+    .teviq-chat-button:hover .teviq-launcher-icon {
+      transform: translate3d(0, -1px, 0) scale(1.04);
+    }
+
+    .teviq-chat-button:active .teviq-launcher-icon {
+      transform: translate3d(0, 0, 0) scale(0.96);
+    }
+
     .teviq-chat-window {
       position: fixed;
       width: min(396px, calc(100vw - 24px));
@@ -1361,6 +1379,7 @@
 
     @media (prefers-reduced-motion: reduce) {
       .teviq-chat-button,
+      .teviq-launcher-icon,
       .teviq-chat-window,
       .teviq-chat-close,
       .teviq-chat-send,
@@ -2181,13 +2200,11 @@
         ? "teviq-position-bottom-left"
         : "teviq-position-bottom-right";
 
-    const button = createElement(
-      "button",
-      `teviq-chat-button ${positionClass}`,
-      "T"
-    );
+    const button = createElement("button", `teviq-chat-button ${positionClass}`);
     button.type = "button";
     button.setAttribute("aria-label", `Open ${config.brandName} support chat`);
+    button.innerHTML =
+      '<svg class="teviq-launcher-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2.5"/><path d="M2 14h2M20 14h2M9 13v2M15 13v2"/></svg>';
     applyTheme(button, config.themeColor);
 
     const windowEl = createElement(
