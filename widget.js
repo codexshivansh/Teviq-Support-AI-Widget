@@ -1042,7 +1042,7 @@
       padding: 0;
       background: transparent;
       color: #94a3b8;
-      font-size: 9px;
+      font-size: 10.8px;
       font-weight: 600;
       line-height: 1;
       opacity: 0.45;
@@ -1051,17 +1051,29 @@
     }
 
     .teviq-powered span,
-    .teviq-powered strong {
+    .teviq-powered a {
       display: block;
       font-size: inherit;
       line-height: 1;
     }
 
-    .teviq-powered strong {
+    .teviq-powered a {
       color: #475569;
       font-weight: 850;
       margin-left: 0;
+      text-decoration: none;
       transform: translateY(0.4px);
+    }
+
+    .teviq-powered a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .teviq-powered a:focus-visible {
+      border-radius: 2px;
+      outline: 2px solid rgba(var(--teviq-theme-rgb, 15, 23, 42), 0.35);
+      outline-offset: 2px;
     }
 
     .teviq-chat-form {
@@ -2245,7 +2257,8 @@
     const messages = createElement("div", "teviq-chat-messages");
 
     const powered = createElement("div", "teviq-powered");
-    powered.innerHTML = "<span>Powered by</span><strong>teviq.in</strong>";
+    powered.innerHTML =
+      '<span>Powered by</span><a href="https://teviq.in/" target="_blank" rel="noopener noreferrer" aria-label="Visit teviq.in">teviq.in</a>';
 
     const form = createElement("form", "teviq-chat-form");
     const compactSuggestions = createElement("div", "teviq-suggestions");
