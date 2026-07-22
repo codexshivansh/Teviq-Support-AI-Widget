@@ -2258,7 +2258,7 @@
 
     const powered = createElement("div", "teviq-powered");
     powered.innerHTML =
-      '<span>Powered by</span><a href="https://teviq.in/" target="_blank" rel="noopener noreferrer" aria-label="Visit teviq.in">teviq.in</a>';
+      '<span>Powered by</span><a href="https://www.teviq.in/" target="_blank" rel="noopener noreferrer" aria-label="Visit teviq.in">teviq.in</a>';
 
     const form = createElement("form", "teviq-chat-form");
     const compactSuggestions = createElement("div", "teviq-suggestions");
