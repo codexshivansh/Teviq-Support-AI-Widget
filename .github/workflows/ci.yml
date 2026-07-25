@@ -8,10 +8,18 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - run: node --check widget.js
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run test:syntax
+      - run: npm run test:release
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
       - name: Reject localhost production embeds
         run: |
           if grep -R 'data-api-url="http://localhost' --include='*.html' .; then
