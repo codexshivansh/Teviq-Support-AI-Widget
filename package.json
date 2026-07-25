@@ -1,0 +1,14 @@
+{
+  "name": "teviq-support-ai-widget",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Embeddable Teviq Support AI storefront widget.",
+  "scripts": {
+    "test:syntax": "node --check widget.js && node --check v1.0.0/widget.js",
+    "test:release": "node scripts/verify-release.js",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1"
+  }
+}
