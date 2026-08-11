@@ -8,7 +8,7 @@ Use the immutable release URL in client stores:
 
 ```html
 <script
-  src="https://teviq-support-ai-widget.vercel.app/v1.0.0/widget.js"
+  src="https://teviq-support-ai-widget.vercel.app/v1.1.0/widget.js"
   data-brand-id="CLIENT_BRAND_ID"
   data-api-url="https://teviq-support-ai-backend.onrender.com">
 </script>
@@ -31,7 +31,7 @@ The browser tests cover welcome suggestions, updated suggestion handlers, manual
 ## Releases
 
 - `widget.js` is the short-cache development/stable alias.
-- `v1.0.0/widget.js` is the immutable production release.
+- `v1.1.0/widget.js` is the immutable production release.
 - `release-manifest.json` records the stable version and SHA-256 checksum.
 - `npm run test:release` fails if a released file changes without a matching manifest update.
 
