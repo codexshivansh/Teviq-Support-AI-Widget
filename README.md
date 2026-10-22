@@ -8,7 +8,7 @@ Use the immutable release URL in client stores:
 
 ```html
 <script
-  src="https://teviq-support-ai-widget.vercel.app/v1.2.0/widget.js"
+  src="https://teviq-support-ai-widget.vercel.app/v1.3.0/widget.js"
   data-brand-id="CLIENT_BRAND_ID"
   data-api-url="https://teviq-support-ai-backend.onrender.com">
 </script>
@@ -31,14 +31,14 @@ The browser tests cover welcome suggestions, updated suggestion handlers, manual
 ## Releases
 
 - `widget.js` is the short-cache development/stable alias.
-- `v1.2.0/widget.js` is the immutable production release.
+- `v1.3.0/widget.js` is the immutable production release.
 - `release-manifest.json` records the stable version and SHA-256 checksum.
 - `npm run test:release` fails if a released file changes without a matching manifest update.
 
 To publish a new version:
 
 1. Finish and verify changes in `widget.js`.
-2. Copy the reviewed source into a new version directory such as `v1.2.0/widget.js`.
+2. Copy the reviewed source into a new version directory such as `v1.3.0/widget.js`.
 3. Add the immutable cache rule in `vercel.json`.
 4. Update `release-manifest.json` with the new path and SHA-256.
 5. Run all widget tests.

@@ -1,5 +1,27 @@
 const { expect, test } = require("@playwright/test");
 
+test("brand appearance controls colours, identity, placement and resizing", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.route("**/api/brand-config/vastra-demo", route => route.fulfill({ json: {
+    brandName: "Custom shop", themeColor: "#ffd000", welcomeTitle: "Hello there",
+    inputPlaceholder: "Ask our team", quickReplies: ["Products"],
+    appearance: { backgroundColor: "#141821", textColor: "#f3f4f6", headerTitle: "Shop helper", statusText: "Here for you", position: "bottom-left", width: 500, height: 700, radius: 12, font: "sans", allowResize: false, showBranding: false }
+  } }));
+  await page.goto("/");
+  await openWidget(page);
+  const panel = page.locator(".teviq-chat-window");
+  await expect(page.locator(".teviq-chat-title")).toHaveText("Shop helper");
+  await expect(panel).toHaveCSS("background-color", "rgb(20, 24, 33)");
+  await expect(page.locator(".teviq-chat-send")).toHaveCSS("background-color", "rgb(255, 208, 0)");
+  await expect(page.locator(".teviq-chat-send")).toHaveCSS("color", "rgb(25, 24, 22)");
+  await expect(panel).toHaveClass(/teviq-position-bottom-left/);
+  await expect(panel).toHaveCSS("width", "500px");
+  await expect(panel).toHaveCSS("border-radius", "12px");
+  await expect(page.locator(".teviq-powered")).toBeHidden();
+  await expect(page.locator('.teviq-resize-handle[data-edge="w"]')).toBeHidden();
+  await expect(page.locator(".teviq-chat-input")).toHaveAttribute("placeholder", "Ask our team");
+});
+
 test("desktop resize persists after reload", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");

@@ -1,5 +1,5 @@
 {
-  "stable": "v1.2.0",
+  "stable": "v1.3.0",
   "releases": {
     "v1.0.0": {
       "file": "v1.0.0/widget.js",
@@ -12,6 +12,10 @@
     "v1.2.0": {
       "file": "v1.2.0/widget.js",
       "sha256": "0e37a4d6c37b9b9d6ee6def891565869d59545c484e1d26a0d5e43b02f07327e"
+    },
+    "v1.3.0": {
+      "file": "v1.3.0/widget.js",
+      "sha256": "5906a19d03f8e0ec94f2576af831908988e584aa782968288a765634e5e38120"
     }
   }
 }

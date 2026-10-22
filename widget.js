@@ -1754,6 +1754,17 @@
     .teviq-resize-handle:hover { background: rgba(105, 97, 86, 0.08); }
     .teviq-chat-window.is-resizing { transition: none; user-select: none; -webkit-user-select: none; }
     @media (max-width: 640px) { .teviq-resize-handle { display: none; } }
+    .teviq-chat-window { background: var(--brand-surface, #fffefa); color: var(--brand-ink, #211f1c); border-color: var(--brand-line, #e8e5df); border-radius: var(--brand-radius, 26px); }
+    .teviq-chat-window .teviq-chat-header { background: var(--brand-header, #fffefa); border-color: var(--brand-line, #e8e5df); }
+    .teviq-chat-window .teviq-chat-messages, .teviq-chat-window .teviq-chat-form, .teviq-chat-window .teviq-chat-input, .teviq-chat-window .teviq-support-card, .teviq-chat-window .teviq-product-tile, .teviq-chat-window .teviq-quick-reply { background: var(--brand-surface, #fffefa); color: var(--brand-ink, #211f1c); border-color: var(--brand-line, #e8e5df); }
+    .teviq-chat-window .teviq-chat-title, .teviq-chat-window .teviq-card-title, .teviq-chat-window .teviq-product-tile-title { color: var(--brand-ink, #211f1c); font-family: var(--brand-heading-font, Georgia); }
+    .teviq-chat-window .teviq-card-welcome .teviq-card-copy { font-family: var(--brand-heading-font, Georgia); }
+    .teviq-chat-window .teviq-chat-status, .teviq-chat-window .teviq-card-copy, .teviq-chat-window .teviq-product-tile-price, .teviq-chat-window .teviq-powered, .teviq-chat-window .teviq-powered a { color: var(--brand-muted, #77736d); }
+    .teviq-chat-window .teviq-chat-message.bot, .teviq-chat-window .teviq-card-stat, .teviq-chat-window .teviq-card-badge, .teviq-chat-window .teviq-chat-close, .teviq-chat-window .teviq-suggestion-chip { background: var(--brand-bubble, #f5f3ef); color: var(--brand-ink, #211f1c); border-color: var(--brand-line, #e8e5df); }
+    .teviq-chat-button, .teviq-chat-window .teviq-chat-avatar, .teviq-chat-window .teviq-chat-send, .teviq-chat-window .teviq-chat-send:hover:not(:disabled), .teviq-chat-window .teviq-chat-message.user { background: var(--teviq-theme); color: var(--brand-on-accent, #fff); }
+    .teviq-chat-window[data-resizable="false"] .teviq-resize-handle { display: none; }
+    .teviq-chat-window [hidden] { display: none !important; }
+    @media (max-width: 640px) { .teviq-chat-window { border-radius: 0; } }
   `;
 
   function injectStyles() {
@@ -2639,7 +2650,7 @@
     windowEl.setAttribute("aria-live", "polite");
     applyTheme(windowEl, config.themeColor);
 
-    const resizeStorageKey = `teviq_support_widget_bounds_${brandId}`;
+    let resizeStorageKey = `teviq_support_widget_bounds_${brandId}`;
     let hasCustomBounds = false;
 
     function clamp(value, min, max) {
@@ -2738,7 +2749,7 @@
       handle.dataset.edge = edge;
       handle.setAttribute("aria-hidden", "true");
       handle.addEventListener("pointerdown", (event) => {
-        if (window.matchMedia("(max-width: 640px)").matches || !windowEl.classList.contains("is-open")) return;
+        if (config.appearance?.allowResize === false || window.matchMedia("(max-width: 640px)").matches || !windowEl.classList.contains("is-open")) return;
         event.preventDefault();
         event.stopPropagation();
 
@@ -2992,7 +3003,53 @@
 
       applyTheme(button, config.themeColor);
       applyTheme(windowEl, config.themeColor);
-      title.textContent = "Teviq AI Assistant";
+      const appearance = config.appearance || {};
+      title.textContent = appearance.headerTitle || "Teviq AI Assistant";
+      statusText.textContent = appearance.statusText ?? "Available now";
+      powered.hidden = appearance.showBranding === false;
+      windowEl.dataset.resizable = String(appearance.allowResize !== false);
+      const colors = { backgroundColor: ["surface", "#fffefa"], headerColor: ["header", "#fffefa"], textColor: ["ink", "#211f1c"], mutedColor: ["muted", "#77736d"], borderColor: ["line", "#e8e5df"], botBubbleColor: ["bubble", "#f5f3ef"] };
+      for (const [key, [token, fallback]] of Object.entries(colors)) {
+        windowEl.style.setProperty(`--brand-${token}`, /^#[0-9a-f]{6}$/i.test(appearance[key] || "") ? appearance[key] : fallback);
+      }
+      windowEl.style.setProperty("--brand-heading-font", appearance.font === "sans" ? "Inter, ui-sans-serif, system-ui, sans-serif" : 'Georgia, "Times New Roman", serif');
+      windowEl.style.setProperty("--brand-radius", `${clamp(Number(appearance.radius ?? 26), 0, 40)}px`);
+      const theme = normalizeHexColor(config.themeColor);
+      const rgb = theme.slice(1).match(/../g).map(x => parseInt(x, 16));
+      const onAccent = rgb[0] * .299 + rgb[1] * .587 + rgb[2] * .114 > 155 ? "#191816" : "#ffffff";
+      for (const element of [button, windowEl]) element.style.setProperty("--brand-on-accent", onAccent);
+      for (const element of [button, windowEl]) {
+        element.classList.toggle("teviq-position-bottom-left", appearance.position === "bottom-left");
+        element.classList.toggle("teviq-position-bottom-right", appearance.position !== "bottom-left");
+      }
+      const width = clamp(Number(appearance.width || 420), 320, 600);
+      const height = clamp(Number(appearance.height || 660), 420, 850);
+      resizeStorageKey = `teviq_support_widget_bounds_${brandId}_${width}_${height}_${appearance.position || "bottom-right"}`;
+      hasCustomBounds = false;
+      for (const property of ["left", "right", "top", "bottom", "maxWidth", "maxHeight"]) windowEl.style[property] = "";
+      windowEl.style.width = `min(${width}px, calc(100vw - 32px))`;
+      windowEl.style.height = `min(${height}px, calc(var(--teviq-vh, 100dvh) - 112px))`;
+      if (appearance.allowResize !== false) {
+        try {
+          const bounds = JSON.parse(localStorage.getItem(resizeStorageKey) || "null");
+          if (bounds && [bounds.left, bounds.top, bounds.width, bounds.height].every(Number.isFinite)) {
+            applyBounds(clampBoundsToViewport(bounds)); hasCustomBounds = true;
+          }
+        } catch { /* Browser storage is optional. */ }
+      }
+      if (appearance.logoUrl) {
+        try {
+          const logoUrl = new URL(appearance.logoUrl);
+          if (logoUrl.protocol === "https:") {
+            const logo = document.createElement("img");
+            logo.alt = ""; logo.referrerPolicy = "no-referrer";
+            logo.style.cssText = "width:100%;height:100%;object-fit:contain;border-radius:inherit";
+            const original = avatar.innerHTML;
+            logo.onerror = () => { avatar.innerHTML = original; };
+            logo.src = logoUrl.href; avatar.replaceChildren(logo);
+          }
+        } catch { /* Keep the brain icon for invalid logo URLs. */ }
+      }
       input.placeholder = config.inputPlaceholder || "Ask about orders, returns, size...";
       windowEl.setAttribute("aria-label", `${config.brandName} support chat`);
       button.setAttribute(
