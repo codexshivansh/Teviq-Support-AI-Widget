@@ -1,5 +1,26 @@
 const { expect, test } = require("@playwright/test");
 
+test("desktop resize persists after reload", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await page.addStyleTag({ content: ".teviq-chat-window { transition: none !important; animation: none !important; }" });
+  await openWidget(page);
+  const panel = page.locator(".teviq-chat-window");
+  const before = await panel.boundingBox();
+  const handle = await page.locator('.teviq-resize-handle[data-edge="w"]').boundingBox();
+  await page.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(handle.x - 100, handle.y + handle.height / 2, { steps: 8 });
+  await page.mouse.up();
+  const resized = await panel.boundingBox();
+  expect(resized.width).toBeGreaterThan(before.width + 80);
+  await page.reload();
+  await page.addStyleTag({ content: ".teviq-chat-window { transition: none !important; animation: none !important; }" });
+  await openWidget(page);
+  const restored = await panel.boundingBox();
+  expect(Math.abs(restored.width - resized.width)).toBeLessThan(2);
+});
+
 async function openWidget(page) {
   const launcher = page.locator(".teviq-chat-button");
   await expect(launcher).toBeVisible();
