@@ -2984,6 +2984,9 @@
 
     fetchBrandConfig().then((remoteConfig) => {
       config = { ...fallbackConfig, ...remoteConfig };
+      for (const key of ["welcomeTitle", "welcomeBody", "quickReplies"]) {
+        if (teviqSupportConfig[key] !== undefined) config[key] = teviqSupportConfig[key];
+      }
       brandCategory = getBrandCategory(config);
       defaultActions = getDefaultActions(config);
 
