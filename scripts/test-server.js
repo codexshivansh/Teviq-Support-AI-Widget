@@ -110,16 +110,16 @@ const server = http.createServer((req, res) => {
     return sendJson(res, 200, {
       brandName: "Teviq Vastra Demo",
       widgetTitle: "Vastra Support",
-      welcomeTitle: "How can I help?",
+      welcomeTitle: "Welcome!",
       welcomeBody:
-        "I can help with orders, returns, shipping, and product questions.",
+        "Ask me about our products, services, pricing, or anything else you’re curious about.",
       themeColor: "#172033",
       position: "bottom-right",
       quickReplies: [
-        { label: "📦 Track my order", message: "Track my order" },
-        { label: "↩ Return / Exchange", message: "Return / Exchange" },
-        { label: "🚚 Shipping & Delivery", message: "Shipping & Delivery" },
-        { label: "👤 Talk to Support", message: "Talk to human" }
+        { label: "Explore products or services", message: "Explore products or services" },
+        { label: "Pricing and plans", message: "Pricing and plans" },
+        { label: "Shipping and delivery", message: "Shipping and delivery" },
+        { label: "Talk to support", message: "Talk to human" }
       ]
     });
   }

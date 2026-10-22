@@ -25,12 +25,15 @@ test("suggestions remain functional through a complete conversation", async ({
 
   const welcomeSuggestions = page.locator(".teviq-quick-reply");
   await expect(welcomeSuggestions).toHaveCount(4);
-  await expect(welcomeSuggestions.nth(0)).toContainText("Track my order");
-  await expect(welcomeSuggestions.nth(1)).toContainText("Return / Exchange");
-  await expect(welcomeSuggestions.nth(2)).toContainText("Shipping & Delivery");
-  await expect(welcomeSuggestions.nth(3)).toContainText("Talk to Support");
+  await expect(welcomeSuggestions.nth(0)).toContainText("Explore products or services");
+  await expect(welcomeSuggestions.nth(1)).toContainText("Pricing and plans");
+  await expect(welcomeSuggestions.nth(2)).toContainText("Shipping and delivery");
+  await expect(welcomeSuggestions.nth(3)).toContainText("Talk to support");
 
-  await welcomeSuggestions.nth(0).click();
+  await welcomeSuggestions.nth(2).click();
+  await waitForCompletedReply(page, "three to five business days");
+  await page.locator(".teviq-chat-input").fill("Track my order");
+  await page.locator(".teviq-chat-input").press("Enter");
   await waitForCompletedReply(page, "share your order ID");
   await expect(
     page.locator(".teviq-chat-message-row.user").last()
@@ -78,8 +81,8 @@ test("suggestions remain functional through a complete conversation", async ({
   );
   await expect(compactSuggestions).toHaveClass(/is-visible/);
 
-  await page.getByRole("button", { name: /Track my order/i }).last().click();
-  await waitForCompletedReply(page, "share your order ID");
+  await page.getByRole("button", { name: /Talk to support/i }).last().click();
+  await waitForCompletedReply(page, "Please share your name");
 });
 
 test("mobile panel fills the viewport and restores page scrolling", async ({

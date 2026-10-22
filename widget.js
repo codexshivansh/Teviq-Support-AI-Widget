@@ -24,12 +24,6 @@
       .join(" ");
   }
 
-  function getInitials(name) {
-    const parts = name.split(/\s+/).filter(Boolean);
-    const initials = parts.length > 1 ? `${parts[0][0]}${parts[1][0]}` : name[0];
-    return initials.toUpperCase();
-  }
-
   function normalizeHexColor(color) {
     if (!/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(color || "")) return "#101828";
     if (color.length === 4) {
@@ -56,16 +50,17 @@
       ? {
           brandName: "Teviq AI",
           widgetTitle: "How can I help?",
-          welcomeTitle: "How can I help?",
-          welcomeBody: "Ask me about pricing, setup, or how Teviq works for your brand.",
+          welcomeTitle: "Welcome!",
+          welcomeBody:
+            "Ask me about our products, services, pricing, or anything else you’re curious about.",
           inputPlaceholder: "Ask about pricing, setup, features...",
           themeColor: "#0f172a",
           position: "bottom-right",
           quickReplies: [
-            { label: "💰 Pricing", message: "💰 Pricing" },
-            { label: "⚡ Setup time", message: "⚡ Setup time" },
-            { label: "📅 Book a demo", message: "📅 Book a demo" },
-            { label: "🛒 For my brand", message: "🛒 For my brand" }
+            { label: "Explore products or services", message: "Explore products or services" },
+            { label: "Pricing and plans", message: "Pricing and plans" },
+            { label: "Shipping and delivery", message: "Shipping and delivery" },
+            { label: "Talk to support", message: "Talk to human" }
           ]
         }
       : {
@@ -74,7 +69,12 @@
           welcomeMessage: `Hi, welcome to ${getBrandName(brandId)} support. How can I help?`,
           themeColor: "#101828",
           position: "bottom-right",
-          quickReplies: ["Track my order", "Return / Exchange", "Size help", "Talk to human"]
+          quickReplies: [
+            { label: "Explore products or services", message: "Explore products or services" },
+            { label: "Pricing and plans", message: "Pricing and plans" },
+            { label: "Shipping and delivery", message: "Shipping and delivery" },
+            { label: "Talk to support", message: "Talk to human" }
+          ]
         };
 
   if (!brandId) {
@@ -1507,6 +1507,253 @@
         transition: none;
       }
     }
+
+    /* Premium minimal storefront treatment */
+    .teviq-chat-button,
+    .teviq-chat-window,
+    .teviq-chat-window * {
+      --teviq-ink: #211f1c;
+      --teviq-muted: #77736d;
+      --teviq-line: #eeece8;
+    }
+
+    .teviq-chat-window {
+      width: min(420px, calc(100vw - 32px));
+      height: min(660px, calc(100dvh - 112px));
+      max-height: calc(100dvh - 112px);
+      border-color: rgba(38, 34, 29, 0.09);
+      border-radius: 26px;
+      background: #fffefa;
+      color: #211f1c;
+      box-shadow: 0 24px 72px rgba(31, 27, 23, 0.16), 0 2px 10px rgba(31, 27, 23, 0.05);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .teviq-chat-window.is-open + .teviq-chat-button {
+      opacity: 0;
+      pointer-events: none;
+      transform: translate3d(0, 8px, 0) scale(0.92);
+    }
+
+    .teviq-chat-header,
+    .teviq-chat-window .teviq-chat-header {
+      min-height: 76px;
+      padding: 14px 18px;
+      border-bottom: 1px solid #eeece8;
+      background: #fffefa;
+      color: #211f1c;
+    }
+
+    .teviq-chat-header::after { display: none; }
+
+    .teviq-chat-avatar {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(38, 34, 29, 0.12);
+      border-radius: 50%;
+      background: #191816;
+      color: #fffefa;
+      box-shadow: none;
+      font-size: 0;
+    }
+
+    .teviq-chat-avatar svg {
+      display: block;
+      width: 24px;
+      height: 24px;
+      color: currentColor;
+    }
+
+    .teviq-chat-title {
+      color: #211f1c;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .teviq-chat-status {
+      margin-top: 5px;
+      color: #77736d;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .teviq-chat-status-dot {
+      width: 7px;
+      height: 7px;
+      background: #258b5b;
+      box-shadow: 0 0 0 3px rgba(37, 139, 91, 0.12);
+    }
+
+    .teviq-chat-close {
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(38, 34, 29, 0.08);
+      border-radius: 50%;
+      background: #f5f3ef;
+      color: #211f1c;
+    }
+
+    .teviq-chat-close:hover {
+      border-color: rgba(38, 34, 29, 0.16);
+      background: #eeece8;
+    }
+
+    .teviq-chat-messages {
+      gap: 13px;
+      padding: 18px;
+      background: #fffefa;
+      scrollbar-color: rgba(105, 97, 86, 0.18) transparent;
+    }
+
+    .teviq-quick-replies {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+      margin-top: 19px;
+    }
+
+    .teviq-quick-reply {
+      display: flex;
+      align-items: center;
+      min-height: 62px;
+      padding: 12px 28px 12px 13px;
+      border: 1px solid #e8e5df;
+      border-radius: 15px;
+      background: #fffefa;
+      color: #211f1c;
+      text-align: left;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.25;
+      box-shadow: none;
+    }
+
+    .teviq-quick-reply::after { content: "›"; position: absolute; inset: auto 13px auto auto; width: auto; height: auto; background: none; color: #77736d; font-size: 21px; line-height: 1; opacity: 1; transform: translateY(-53%); transition: none; }
+    .teviq-quick-reply:hover:not(:disabled)::after { opacity: 1; transform: translateY(-53%); }
+    .teviq-quick-reply:hover:not(:disabled) { background: #f8f6f2; color: #211f1c; box-shadow: 0 4px 12px rgba(31, 27, 23, 0.05); transform: translateY(-1px); }
+
+    .teviq-card-welcome {
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      animation: none;
+    }
+
+    .teviq-card-welcome .teviq-card-inner { gap: 0; padding: 3px 0 0; }
+    .teviq-card-welcome .teviq-card-topline { display: block; }
+    .teviq-card-welcome .teviq-card-kicker { display: none; }
+    .teviq-card-welcome .teviq-card-title {
+      color: #171614;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 34px;
+      font-weight: 500;
+      letter-spacing: -0.045em;
+      line-height: 1.06;
+    }
+    .teviq-card-welcome .teviq-card-copy {
+      margin-top: 6px;
+      color: #77736d;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 26px;
+      font-weight: 400;
+      letter-spacing: -0.035em;
+      line-height: 1.14;
+    }
+    .teviq-card-welcome .teviq-card-badge { display: none; }
+    .teviq-card-welcome.is-archived .teviq-card-title { display: none; }
+
+    .teviq-chat-message-row { max-width: 96%; }
+    .teviq-chat-message { font-size: 13.5px; line-height: 1.55; }
+    .teviq-chat-message.user { border-radius: 16px 16px 5px 16px; background: #272521; box-shadow: none; }
+    .teviq-chat-message.bot { border: 1px solid #eeece8; border-radius: 16px 16px 16px 5px; background: #f5f3ef; color: #211f1c; box-shadow: none; }
+
+    .teviq-support-card { border-color: #eeece8; border-radius: 16px; background: #fffefa; box-shadow: 0 2px 10px rgba(31, 27, 23, 0.035); }
+    .teviq-card-inner { gap: 11px; padding: 14px; }
+    .teviq-card-title { color: #211f1c; font-family: Georgia, "Times New Roman", serif; font-size: 16px; font-weight: 600; }
+    .teviq-card-copy { color: #625e58; }
+    .teviq-card-badge { border-color: rgba(132, 124, 113, 0.2); background: #f7f5f1; color: #625e58; }
+    .teviq-card-stat { background: #f8f6f2; }
+
+    .teviq-product-grid {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      overflow-x: auto;
+      padding: 2px 0 5px;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: thin;
+    }
+    .teviq-product-tile { flex: 0 0 78%; scroll-snap-align: start; border-color: #eeece8; border-radius: 14px; background: #fffefa; }
+    .teviq-product-tile-image,
+    .teviq-product-tile-image-placeholder { aspect-ratio: 1.2 / 1; background: #f0ede7; }
+    .teviq-product-tile-body { gap: 4px; padding: 10px 11px 11px; }
+    .teviq-product-tile-title { color: #211f1c; font-family: Georgia, "Times New Roman", serif; font-size: 14px; font-weight: 500; }
+    .teviq-product-tile-price { color: #625e58; font-size: 13px; }
+    .teviq-product-tile-cta { color: #77736d; }
+
+    .teviq-chat-form { gap: 8px; padding: 10px 14px 10px; border-top-color: #eeece8; background: #fffefa; }
+    .teviq-chat-window .teviq-chat-form { padding: 10px 14px 10px; }
+    .teviq-chat-input { height: 48px; padding: 0 17px; border-color: #dfdcd6; border-radius: 999px; background: #fffefa; color: #211f1c; }
+    .teviq-chat-input:focus { border-color: rgba(88, 79, 66, 0.36); box-shadow: 0 0 0 3px rgba(88, 79, 66, 0.06); }
+    .teviq-chat-send { width: 40px; height: 40px; margin-right: 4px; border-radius: 50%; background: #8a857d; box-shadow: none; }
+    .teviq-chat-send:hover:not(:disabled) { background: #6f6a63; box-shadow: none; }
+    .teviq-powered { min-height: 12px; padding-top: 2px; color: #8c8780; opacity: 0.72; }
+    .teviq-powered a { color: #37342f; }
+
+    @media (max-width: 640px) {
+      .teviq-chat-window { width: 100vw; height: var(--teviq-vh, 100dvh); max-height: none; border-radius: 0; }
+      .teviq-chat-header, .teviq-chat-window .teviq-chat-header { min-height: calc(70px + env(safe-area-inset-top)); padding: calc(14px + env(safe-area-inset-top)) 18px 14px; }
+      .teviq-chat-messages { padding: 20px 18px; }
+      .teviq-card-welcome .teviq-card-title { font-size: 38px; }
+      .teviq-card-welcome .teviq-card-copy { font-size: 29px; }
+      .teviq-quick-reply { min-height: 66px; padding: 12px 24px 12px 13px; font-size: 14px; }
+      .teviq-chat-form, .teviq-chat-window .teviq-chat-form { padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); }
+      .teviq-product-tile { flex-basis: 72%; }
+    }
+
+    .teviq-resize-handle {
+      position: absolute;
+      z-index: 8;
+      display: block;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .teviq-resize-handle[data-edge="n"],
+    .teviq-resize-handle[data-edge="s"] { left: 12px; right: 12px; height: 7px; cursor: ns-resize; }
+    .teviq-resize-handle[data-edge="n"] { top: 0; }
+    .teviq-resize-handle[data-edge="s"] { bottom: 0; }
+    .teviq-resize-handle[data-edge="e"],
+    .teviq-resize-handle[data-edge="w"] { top: 14px; bottom: 14px; width: 7px; cursor: ew-resize; }
+    .teviq-resize-handle[data-edge="e"] { right: 0; }
+    .teviq-resize-handle[data-edge="w"] { left: 0; }
+    .teviq-resize-handle[data-edge="ne"],
+    .teviq-resize-handle[data-edge="nw"],
+    .teviq-resize-handle[data-edge="se"],
+    .teviq-resize-handle[data-edge="sw"] { width: 16px; height: 16px; }
+    .teviq-resize-handle[data-edge="ne"] { top: 0; right: 0; cursor: nesw-resize; }
+    .teviq-resize-handle[data-edge="nw"] { top: 0; left: 0; cursor: nwse-resize; }
+    .teviq-resize-handle[data-edge="se"] { right: 0; bottom: 0; cursor: nwse-resize; }
+    .teviq-resize-handle[data-edge="sw"] { left: 0; bottom: 0; cursor: nesw-resize; }
+    .teviq-resize-handle[data-edge="se"]::after,
+    .teviq-resize-handle[data-edge="sw"]::after {
+      content: "";
+      position: absolute;
+      bottom: 4px;
+      width: 8px;
+      height: 8px;
+      border-bottom: 1px solid rgba(105, 97, 86, 0.42);
+    }
+    .teviq-resize-handle[data-edge="se"]::after { right: 4px; border-right: 1px solid rgba(105, 97, 86, 0.42); }
+    .teviq-resize-handle[data-edge="sw"]::after { left: 4px; border-left: 1px solid rgba(105, 97, 86, 0.42); }
+    .teviq-resize-handle:hover { background: rgba(105, 97, 86, 0.08); }
+    .teviq-chat-window.is-resizing { transition: none; user-select: none; -webkit-user-select: none; }
+    @media (max-width: 640px) { .teviq-resize-handle { display: none; } }
   `;
 
   function injectStyles() {
@@ -2222,8 +2469,9 @@
   }
 
   function normalizeAction(action) {
-    if (typeof action === "string") return createAction(action, action);
-    return createAction(action?.label || action?.message || "", action?.message || action?.label || "");
+    const label = typeof action === "string" ? action : action?.label || action?.message || "";
+    const message = typeof action === "string" ? action : action?.message || action?.label || "";
+    return createAction(String(label).replace(/^[\p{Extended_Pictographic}\p{So}\uFE0F\u200D↩]+\s*/u, ""), message);
   }
 
   function getBrandCategory(config) {
@@ -2239,10 +2487,10 @@
       return config.quickReplies.map(normalizeAction).filter((action) => action.label);
     }
     return [
-      createAction("📦 Track my order", "Track my order"),
-      createAction("↩ Return / Exchange", "Return / Exchange"),
-      createAction("🚚 Shipping & Delivery", "Shipping & Delivery"),
-      createAction("👤 Talk to Support", "Talk to human")
+      createAction("Explore products or services", "Explore products or services"),
+      createAction("Pricing and plans", "Pricing and plans"),
+      createAction("Shipping and delivery", "Shipping and delivery"),
+      createAction("Talk to support", "Talk to human")
     ];
   }
 
@@ -2391,21 +2639,59 @@
     windowEl.setAttribute("aria-live", "polite");
     applyTheme(windowEl, config.themeColor);
 
+    const resizeStorageKey = `teviq_support_widget_bounds_${brandId}`;
+    let hasCustomBounds = false;
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function applyBounds(bounds) {
+      windowEl.style.left = `${bounds.left}px`;
+      windowEl.style.top = `${bounds.top}px`;
+      windowEl.style.right = "auto";
+      windowEl.style.bottom = "auto";
+      windowEl.style.width = `${bounds.width}px`;
+      windowEl.style.height = `${bounds.height}px`;
+      windowEl.style.maxWidth = "none";
+      windowEl.style.maxHeight = "none";
+    }
+
+    function clampBoundsToViewport(bounds) {
+      const minWidth = Math.min(320, Math.max(180, window.innerWidth - 16));
+      const minHeight = Math.min(420, Math.max(240, window.innerHeight - 16));
+      const width = clamp(bounds.width, minWidth, Math.max(minWidth, window.innerWidth - 16));
+      const height = clamp(bounds.height, minHeight, Math.max(minHeight, window.innerHeight - 16));
+      return {
+        left: clamp(bounds.left, 8, Math.max(8, window.innerWidth - width - 8)),
+        top: clamp(bounds.top, 8, Math.max(8, window.innerHeight - height - 8)),
+        width,
+        height
+      };
+    }
+
+    try {
+      const savedBounds = JSON.parse(window.localStorage.getItem(resizeStorageKey) || "null");
+      if (savedBounds && [savedBounds.left, savedBounds.top, savedBounds.width, savedBounds.height].every(Number.isFinite)) {
+        applyBounds(clampBoundsToViewport(savedBounds));
+        hasCustomBounds = true;
+      }
+    } catch (error) {
+      // Resizing remains available when storage is blocked; only persistence is skipped.
+    }
+
     const header = createElement("header", "teviq-chat-header");
     const brandWrap = createElement("div", "teviq-chat-brand");
-    const avatar = createElement(
-      "div",
-      "teviq-chat-avatar",
-      getInitials(config.brandName)
-    );
+    const avatar = createElement("div", "teviq-chat-avatar");
+    avatar.setAttribute("aria-label", "AI assistant");
+    avatar.innerHTML =
+      '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 5.2a5.1 5.1 0 0 0-8.8 3.5 4.8 4.8 0 0 0-1.4 8.7 4.9 4.9 0 0 0 4.7 7.3c1.2 1.6 3.4 2 5.5.9V5.2Z"/><path d="M16 5.2a5.1 5.1 0 0 1 8.8 3.5 4.8 4.8 0 0 1 1.4 8.7 4.9 4.9 0 0 1-4.7 7.3c-1.2 1.6-3.4 2-5.5.9V5.2Z"/><path d="M11 11.5c2.3 0 3.8 1.3 3.8 3.1M21 11.5c-2.3 0-3.8 1.3-3.8 3.1M10.5 19.1c2 0 3.3-1.1 4-2.6M21.5 19.1c-2 0-3.3-1.1-4-2.6M16 5.2v20"/></svg>';
     const titleWrap = createElement("div", "teviq-chat-title-wrap");
-    const headerTitle =
-      config.headerTitle ||
-      (brandId === "teviq" ? "Teviq Support AI" : config.brandName || config.widgetTitle);
+    const headerTitle = "Teviq AI Assistant";
     const title = createElement("h2", "teviq-chat-title", headerTitle);
     const status = createElement("div", "teviq-chat-status");
     const statusDot = createElement("span", "teviq-chat-status-dot");
-    const statusText = createElement("span", "", "Online support");
+    const statusText = createElement("span", "", "Available now");
     status.append(statusDot, statusText);
     titleWrap.append(title, status);
     brandWrap.append(avatar, titleWrap);
@@ -2447,6 +2733,81 @@
     form.append(compactSuggestions, composerRow, powered);
 
     windowEl.append(header, messages, form);
+    ["n", "s", "e", "w", "ne", "nw", "se", "sw"].forEach((edge) => {
+      const handle = createElement("span", "teviq-resize-handle");
+      handle.dataset.edge = edge;
+      handle.setAttribute("aria-hidden", "true");
+      handle.addEventListener("pointerdown", (event) => {
+        if (window.matchMedia("(max-width: 640px)").matches || !windowEl.classList.contains("is-open")) return;
+        event.preventDefault();
+        event.stopPropagation();
+
+        const start = windowEl.getBoundingClientRect();
+        const startX = event.clientX;
+        const startY = event.clientY;
+        const edges = edge.split("");
+        windowEl.classList.add("is-resizing");
+        handle.setPointerCapture?.(event.pointerId);
+
+        const move = (moveEvent) => {
+          const dx = moveEvent.clientX - startX;
+          const dy = moveEvent.clientY - startY;
+          const minWidth = Math.min(320, Math.max(180, window.innerWidth - 16));
+          const minHeight = Math.min(420, Math.max(240, window.innerHeight - 16));
+          const maxWidth = Math.max(minWidth, window.innerWidth - 16);
+          const maxHeight = Math.max(minHeight, window.innerHeight - 16);
+          let left = start.left;
+          let top = start.top;
+          let width = start.width;
+          let height = start.height;
+
+          if (edges.includes("w")) {
+            left = clamp(start.left + dx, 8, start.right - minWidth);
+            width = start.right - left;
+          } else if (edges.includes("e")) {
+            width = clamp(start.width + dx, minWidth, Math.min(maxWidth, window.innerWidth - start.left - 8));
+          }
+
+          if (edges.includes("n")) {
+            top = clamp(start.top + dy, 8, start.bottom - minHeight);
+            height = start.bottom - top;
+          } else if (edges.includes("s")) {
+            height = clamp(start.height + dy, minHeight, Math.min(maxHeight, window.innerHeight - start.top - 8));
+          }
+
+          applyBounds({ left, top, width, height });
+          hasCustomBounds = true;
+        };
+
+        const finish = (finishEvent) => {
+          handle.removeEventListener("pointermove", move);
+          handle.removeEventListener("pointerup", finish);
+          handle.removeEventListener("pointercancel", finish);
+          windowEl.classList.remove("is-resizing");
+          try {
+            handle.releasePointerCapture?.(finishEvent.pointerId);
+          } catch (error) {
+            // Pointer capture may already have been released by the browser.
+          }
+          try {
+            const bounds = windowEl.getBoundingClientRect();
+            window.localStorage.setItem(resizeStorageKey, JSON.stringify({
+              left: bounds.left,
+              top: bounds.top,
+              width: bounds.width,
+              height: bounds.height
+            }));
+          } catch (error) {
+            // Keep the resized dimensions for this page even when storage is blocked.
+          }
+        };
+
+        handle.addEventListener("pointermove", move);
+        handle.addEventListener("pointerup", finish);
+        handle.addEventListener("pointercancel", finish);
+      });
+      windowEl.appendChild(handle);
+    });
     document.body.append(windowEl, button);
 
     const mobileQuery = window.matchMedia("(max-width: 640px)");
@@ -2498,6 +2859,9 @@
 
     function syncMobileLayout() {
       updateViewportHeight();
+      if (hasCustomBounds && !mobileQuery.matches) {
+        applyBounds(clampBoundsToViewport(windowEl.getBoundingClientRect()));
+      }
       if (windowEl.classList.contains("is-open") && isMobilePanel()) {
         windowEl.classList.add("teviq-mobile-open");
         lockBodyScroll();
@@ -2625,10 +2989,7 @@
 
       applyTheme(button, config.themeColor);
       applyTheme(windowEl, config.themeColor);
-      avatar.textContent = getInitials(config.brandName);
-      title.textContent =
-        config.headerTitle ||
-        (brandId === "teviq" ? "Teviq Support AI" : config.brandName || config.widgetTitle);
+      title.textContent = "Teviq AI Assistant";
       input.placeholder = config.inputPlaceholder || "Ask about orders, returns, size...";
       windowEl.setAttribute("aria-label", `${config.brandName} support chat`);
       button.setAttribute(
