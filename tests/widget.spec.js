@@ -1,5 +1,26 @@
 const { expect, test } = require("@playwright/test");
 
+test("signed session is reused after reload and caller customer IDs are not sent", async ({ page }) => {
+  const requests = [];
+  await page.route('**/api/chat', async route => {
+    requests.push(route.request().postDataJSON());
+    await route.fulfill({ json: { reply: 'Session test answer.', sessionToken: 'synthetic.signed-token' } });
+  });
+  await page.goto('/');
+  await openWidget(page);
+  await page.locator('.teviq-chat-input').fill('First question');
+  await page.locator('.teviq-chat-input').press('Enter');
+  await waitForCompletedReply(page, 'Session test answer.');
+  expect(requests[0].sessionToken).toBeNull();
+  expect(requests[0]).not.toHaveProperty('customerId');
+  await page.reload();
+  await openWidget(page);
+  await page.locator('.teviq-chat-input').fill('Follow up');
+  await page.locator('.teviq-chat-input').press('Enter');
+  await waitForCompletedReply(page, 'Session test answer.');
+  expect(requests[1].sessionToken).toBe('synthetic.signed-token');
+});
+
 test("brand appearance controls colours, identity, placement and resizing", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.route("**/api/brand-config/vastra-demo", route => route.fulfill({ json: {

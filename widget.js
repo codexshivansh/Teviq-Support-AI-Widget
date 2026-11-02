@@ -2408,14 +2408,15 @@
     bubble.appendChild(stack);
   }
 
-  function getCustomerId() {
-    const key = `teviq_support_customer_id_${brandId}`;
-    let customerId = window.localStorage.getItem(key);
-    if (!customerId) {
-      customerId = `guest_${Math.random().toString(36).slice(2, 10)}`;
-      window.localStorage.setItem(key, customerId);
-    }
-    return customerId;
+  // A server-signed capability, never a caller-selected customer ID.
+  let sessionToken = null;
+  const sessionKey = `teviq_support_session_${normalizedApiUrl}_${brandId}`;
+  try { sessionToken = window.sessionStorage.getItem(sessionKey); } catch (_) {}
+
+  function saveSessionToken(token) {
+    if (typeof token !== "string") return;
+    sessionToken = token;
+    try { window.sessionStorage.setItem(sessionKey, token); } catch (_) {}
   }
 
   async function fetchBrandConfig() {
@@ -2438,12 +2439,13 @@
         brand_id: brandId,
         brandId,
         message,
-        customerId: getCustomerId(),
+        sessionToken,
         ...(contextOrderId ? { context: { orderId: contextOrderId } } : {})
       })
     });
 
     const data = await response.json().catch(() => null);
+    saveSessionToken(data?.sessionToken);
 
     if (!response.ok) {
       throw new Error(data?.reply || "Could not connect. Please try again.");
